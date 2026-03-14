@@ -1,6 +1,7 @@
 import { cloneDefaultMenu, defaultMenu } from "./defaultMenu.js";
+import { apiUrl } from "../lib/api.js";
 
-const MENU_API_PATH = "/api/menu";
+const MENU_API_PATH = apiUrl("/api/menu");
 const MENU_CACHE_KEY = "boldbrew_menu_cache";
 const MENU_REQUEST_TIMEOUT_MS = 5000;
 

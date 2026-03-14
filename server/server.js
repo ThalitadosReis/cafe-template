@@ -3,12 +3,14 @@ import cors from "cors";
 import { MongoClient } from "mongodb";
 import "dotenv/config";
 import { cloneDefaultMenu } from "../src/data/defaultMenu.js";
-import {
+import contactMail from "./contact-mail.cjs";
+
+const {
   buildContactMailOptions,
   getTransporter,
   logTransportPreview,
   validateContactPayload,
-} from "./contact-mail.js";
+} = contactMail;
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -17,9 +19,23 @@ const MONGODB_DB = process.env.MONGODB_DB || "boldbrew";
 const MONGODB_COLLECTION = process.env.MONGODB_COLLECTION || "menus";
 const MENU_DOCUMENT_ID = "main";
 const MONGO_TIMEOUT_MS = 5000;
+const allowedOrigins = [
+  ...(process.env.FRONTEND_URLS || "").split(","),
+  process.env.FRONTEND_URL || "http://localhost:5173",
+]
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+function corsOrigin(origin, callback) {
+  if (!origin || allowedOrigins.includes(origin)) {
+    return callback(null, true);
+  }
+
+  return callback(new Error(`CORS blocked for origin: ${origin}`));
+}
 
 // ── Middleware ──────────────────────────────────────────
-app.use(cors({ origin: process.env.FRONTEND_URL || "http://localhost:5173" }));
+app.use(cors({ origin: corsOrigin }));
 app.use(express.json());
 
 let menuCollection = null;
@@ -134,11 +150,13 @@ app.post("/api/contact", async (req, res) => {
 app.get("/api/health", (_req, res) => res.json({ status: "ok" }));
 
 // ── Start ───────────────────────────────────────────────
-Promise.all([getTransporter(), connectToMongo()]).then(() => {
-  app.listen(PORT, () => {
-    console.log(`🌿  BoldBrew backend listening on http://localhost:${PORT}`);
+Promise.all([getTransporter(), connectToMongo()])
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`🌿  BoldBrew backend listening on http://localhost:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("Server startup failed:", err);
+    process.exit(1);
   });
-}).catch((err) => {
-  console.error("Server startup failed:", err);
-  process.exit(1);
-});

@@ -1,6 +1,25 @@
 const nodemailer = require("nodemailer");
 const CONTACT_EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+async function getTransporter() {
+  const smtpUser = process.env.SMTP_USER?.trim();
+  const smtpPass = process.env.SMTP_PASS?.trim();
+
+  if (!smtpUser || !smtpPass) {
+    throw new Error("Missing SMTP credentials");
+  }
+
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST || "smtp.gmail.com",
+    port: Number(process.env.SMTP_PORT || 587),
+    secure: process.env.SMTP_SECURE === "true",
+    auth: {
+      user: smtpUser,
+      pass: smtpPass,
+    },
+  });
+}
+
 function validateContactPayload(payload) {
   const { name, email, subject, message } = payload;
 
@@ -23,8 +42,7 @@ function validateContactPayload(payload) {
 }
 
 function buildContactMailOptions({ name, email, subject, message }) {
-  const shellStyle =
-    "width:100%;padding:32px 16px;background:#f5f3ef;";
+  const shellStyle = "width:100%;padding:32px 16px;background:#f5f3ef;";
   const cardStyle =
     "max-width:640px;margin:0 auto;background:#ffffff;border:1px solid #e8e3db;border-radius:20px;overflow:hidden;box-shadow:0 8px 24px rgba(24,24,24,0.04);";
   const heroStyle =
@@ -137,6 +155,7 @@ function renderEmailHtml(content) {
 
 module.exports = {
   buildContactMailOptions,
+  getTransporter,
   logTransportPreview,
   validateContactPayload,
 };
