@@ -178,7 +178,8 @@ export const en = {
       legend: {
         english: "English",
         german: "Deutsch",
-        text: "Price is shared across both languages. Drag to reorder.",
+        priceText: "Price is shared across both languages",
+        reorderText: "Drag to reorder",
       },
     },
   },

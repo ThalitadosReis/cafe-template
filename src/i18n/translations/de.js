@@ -176,7 +176,8 @@ export const de = {
       legend: {
         english: 'Englisch',
         german: 'Deutsch',
-        text: 'Der Preis ist für beide Sprachen gleich. Zum Umordnen ziehen.',
+        priceText: 'Der Preis ist für beide Sprachen gleich',
+        reorderText: 'Zum Umordnen ziehen',
       },
     },
   },

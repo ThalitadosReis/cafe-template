@@ -27,6 +27,7 @@ import {
   DotsSixVerticalIcon,
   SignOutIcon,
   EyeIcon,
+  InfoIcon,
 } from "@phosphor-icons/react";
 import { getMenu, saveMenu, resetMenu } from "../data/menu.js";
 import { useLang } from "../i18n/LangContext.jsx";
@@ -714,7 +715,10 @@ export default function AdminPage() {
                   label={copy.topbar.preview}
                 />
                 <ResetButton onClick={handleReset} label={copy.topbar.reset} />
-                <LogoutButton onClick={handleLogout} label={copy.topbar.logout} />
+                <LogoutButton
+                  onClick={handleLogout}
+                  label={copy.topbar.logout}
+                />
                 <LanguageToggleButton lang={lang} onClick={handleLangToggle} />
               </div>
             </div>
@@ -769,19 +773,31 @@ export default function AdminPage() {
           </div>
 
           <div
-            className={`${SECTION_CARD_CLASS} flex flex-wrap items-center gap-x-5 gap-y-2 px-4 py-3 text-xs text-taupe-600`}
+            className={`${SECTION_CARD_CLASS} px-4 py-3 text-xs text-taupe-600`}
           >
-            <span className="text-taupe-700">ⓘ</span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-[#4a90d9]/40" />{" "}
-              {copy.page.legend.english}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-[#e07b4a]/40" />{" "}
-              {copy.page.legend.german}
-            </span>
-            <span className="mx-1 text-taupe-400">·</span>
-            {copy.page.legend.text}
+            <div className="flex flex-wrap items-start gap-x-5 gap-y-2">
+              <InfoIcon size={20} className="text-taupe-700" />
+              <div>
+                <div className="flex gap-4">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-[#4a90d9]/40" />{" "}
+                    {copy.page.legend.english}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-[#e07b4a]/40" />{" "}
+                    {copy.page.legend.german}
+                  </span>
+                </div>
+
+                <div className="mt-1 flex items-center gap-1.5 text-taupe-600">
+                  <DotsSixVerticalIcon size={14} weight="bold" />
+                  <span>{copy.page.legend.reorderText}</span>
+                </div>
+                <div className="mt-2 flex items-center gap-1.5 text-taupe-600">
+                  <span>{copy.page.legend.priceText}</span>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
