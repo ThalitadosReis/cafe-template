@@ -1,4 +1,5 @@
-import { isValidMenu, json, parseBody, readMenu, writeMenu } from "./_shared.js";
+import { isValidMenu, readMenu, writeMenu } from "./_shared-menu.js";
+import { json, parseBody } from "./_shared-http.js";
 
 export const handler = async (event) => {
   if (event.httpMethod === "GET") {

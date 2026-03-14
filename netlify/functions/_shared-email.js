@@ -1,17 +1,8 @@
 import nodemailer from "nodemailer";
-import { MongoClient } from "mongodb";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { cloneDefaultMenu } from "../../src/data/defaultMenu.js";
 
-const MONGODB_URI = process.env.MONGODB_URI;
-const MONGODB_DB = process.env.MONGODB_DB || "boldbrew";
-const MONGODB_COLLECTION = process.env.MONGODB_COLLECTION || "menus";
-const MENU_DOCUMENT_ID = "main";
-
-let transporterPromise;
-let menuCollectionPromise;
 const CONTACT_EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,28 +11,7 @@ const emailCss = fs.existsSync(EMAIL_CSS_PATH)
   ? fs.readFileSync(EMAIL_CSS_PATH, "utf8")
   : "";
 
-export function json(statusCode, body) {
-  return {
-    statusCode,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  };
-}
-
-export function parseBody(body) {
-  if (!body) return {};
-  try {
-    return JSON.parse(body);
-  } catch {
-    return {};
-  }
-}
-
-export function isValidMenu(menu) {
-  return Array.isArray(menu);
-}
+let transporterPromise;
 
 export async function getTransporter() {
   if (!transporterPromise) {
@@ -177,62 +147,4 @@ function renderEmailHtml(content) {
       <body>${content}</body>
     </html>
   `.trim();
-}
-
-export async function getMenuCollection() {
-  if (!MONGODB_URI) {
-    return null;
-  }
-
-  if (!menuCollectionPromise) {
-    menuCollectionPromise = (async () => {
-      const client = new MongoClient(MONGODB_URI);
-      await client.connect();
-      return client.db(MONGODB_DB).collection(MONGODB_COLLECTION);
-    })().catch((err) => {
-      menuCollectionPromise = null;
-      throw err;
-    });
-  }
-
-  return menuCollectionPromise;
-}
-
-export async function readMenu() {
-  const collection = await getMenuCollection();
-  if (!collection) {
-    return cloneDefaultMenu();
-  }
-
-  const doc = await collection.findOne({ _id: MENU_DOCUMENT_ID });
-  if (!doc?.menu || !isValidMenu(doc.menu)) {
-    const menu = cloneDefaultMenu();
-    await collection.updateOne(
-      { _id: MENU_DOCUMENT_ID },
-      { $set: { menu, updatedAt: new Date() } },
-      { upsert: true },
-    );
-    return menu;
-  }
-
-  return doc.menu;
-}
-
-export async function writeMenu(menu) {
-  if (!isValidMenu(menu)) {
-    throw new Error("Invalid menu payload");
-  }
-
-  const collection = await getMenuCollection();
-  if (!collection) {
-    return menu;
-  }
-
-  await collection.updateOne(
-    { _id: MENU_DOCUMENT_ID },
-    { $set: { menu, updatedAt: new Date() } },
-    { upsert: true },
-  );
-
-  return menu;
 }

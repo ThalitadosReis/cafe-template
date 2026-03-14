@@ -8,7 +8,7 @@ import {
   getTransporter,
   logTransportPreview,
   validateContactPayload,
-} from "./netlify/functions/_shared.js";
+} from "./netlify/functions/_shared-email.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;

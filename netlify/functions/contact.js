@@ -1,11 +1,10 @@
 import {
   buildContactMailOptions,
   getTransporter,
-  json,
   logTransportPreview,
-  parseBody,
   validateContactPayload,
-} from "./_shared.js";
+} from "./_shared-email.js";
+import { json, parseBody } from "./_shared-http.js";
 
 export const handler = async (event) => {
   if (event.httpMethod !== "POST") {
