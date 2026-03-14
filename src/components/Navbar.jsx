@@ -45,14 +45,30 @@ export default function Navbar() {
       ? location.pathname === "/"
       : location.pathname.startsWith(path);
 
+  const scrollToPageTop = useCallback(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, []);
+
+  const handleNavInteraction = useCallback(() => {
+    setOpen(false);
+    scrollToPageTop();
+  }, [scrollToPageTop]);
+
+  const handleLangToggle = useCallback(() => {
+    setOpen(false);
+    setLang((currentLang) => (currentLang === "en" ? "de" : "en"));
+  }, [setLang]);
+
   const handleLogoClick = useCallback(
     (e) => {
+      handleNavInteraction();
       const next = clickCount + 1;
       if (next >= ADMIN_CLICKS) {
         e.preventDefault();
         setClickCount(0);
         clearTimeout(clickTimerRef.current);
         navigate("/admin");
+        scrollToPageTop();
         return;
       }
 
@@ -60,7 +76,7 @@ export default function Navbar() {
       clearTimeout(clickTimerRef.current);
       clickTimerRef.current = setTimeout(() => setClickCount(0), ADMIN_TIMEOUT);
     },
-    [clickCount, navigate],
+    [clickCount, handleNavInteraction, navigate, scrollToPageTop],
   );
 
   useEffect(
@@ -98,6 +114,7 @@ export default function Navbar() {
               <Link
                 key={link.to}
                 to={link.to}
+                onClick={handleNavInteraction}
                 className={`text-[11px] uppercase tracking-[0.22em] transition-colors duration-300 ${
                   isActive(link.to)
                     ? "text-taupe-900"
@@ -110,6 +127,7 @@ export default function Navbar() {
 
             <CtaLink
               to="/contact"
+              onClick={handleNavInteraction}
               variant="outline"
               showIcon={false}
               className="px-6 py-2.5"
@@ -118,7 +136,7 @@ export default function Navbar() {
             </CtaLink>
 
             <button
-              onClick={() => setLang(lang === "en" ? "de" : "en")}
+              onClick={handleLangToggle}
               className="border-b border-dashed border-taupe-500 text-[11px] uppercase tracking-[0.22em] text-taupe-600 transition-colors duration-300 hover:text-taupe-900"
             >
               {lang === "en" ? "DE" : "EN"}
@@ -187,6 +205,7 @@ export default function Navbar() {
                     >
                       <Link
                         to={link.to}
+                        onClick={handleNavInteraction}
                         className={`group flex items-center justify-between border-b border-taupe-300 py-5 ${
                           isActive(link.to)
                             ? "text-taupe-900"
@@ -206,7 +225,7 @@ export default function Navbar() {
                 )}
 
                 <button
-                  onClick={() => setLang(lang === "en" ? "de" : "en")}
+                  onClick={handleLangToggle}
                   className="mt-8 w-fit border-b border-dashed border-taupe-500 text-left text-xs uppercase tracking-[0.25em] text-taupe-600 transition-colors duration-300 hover:text-taupe-900"
                 >
                   {lang === "en" ? "Deutsch" : "English"}

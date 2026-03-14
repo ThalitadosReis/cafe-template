@@ -93,7 +93,7 @@ export default function Contact() {
 
       <section className="pb-24">
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-6 lg:grid-cols-2 lg:px-12">
-          <Reveal direction="right">
+          <Reveal direction="right" className="order-2 hidden lg:block">
             <div>
               <h3 className="mb-6 font-display text-3xl font-light text-taupe-900">
                 {copy.labels.address}
@@ -128,7 +128,11 @@ export default function Contact() {
             </div>
           </Reveal>
 
-          <Reveal direction="left" delay={0.08}>
+          <Reveal
+            direction="left"
+            delay={0.08}
+            className="order-1 lg:order-2"
+          >
             <div className="space-y-5 rounded-3xl bg-white p-6 shadow-[0_4px_40px_rgb(44_37_32/6%)] md:p-8">
               {status === "success" ? (
                 <div className="flex min-h-105 flex-col items-center justify-center text-center">

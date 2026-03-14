@@ -18,10 +18,12 @@ export default function CtaLink({
   className = "",
   iconSize = 14,
   showIcon = true,
+  onClick,
 }) {
   return (
     <Link
       to={to}
+      onClick={onClick}
       className={`${BASE_CLASS} ${!showIcon ? "gap-0" : ""} ${VARIANT_CLASS[variant]} ${className}`}
     >
       {children}
