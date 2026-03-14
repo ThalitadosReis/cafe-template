@@ -21,13 +21,18 @@ const MENU_DOCUMENT_ID = "main";
 const MONGO_TIMEOUT_MS = 5000;
 const allowedOrigins = [
   ...(process.env.FRONTEND_URLS || "").split(","),
-  process.env.FRONTEND_URL || "http://localhost:5173",
+  process.env.FRONTEND_URL,
+  "http://localhost:5173",
+  "https://template-cafe.netlify.app",
 ]
   .map((origin) => origin.trim())
   .filter(Boolean);
 
 function corsOrigin(origin, callback) {
-  if (!origin || allowedOrigins.includes(origin)) {
+  const isAllowedNetlifyPreview =
+    typeof origin === "string" && origin.endsWith(".netlify.app");
+
+  if (!origin || allowedOrigins.includes(origin) || isAllowedNetlifyPreview) {
     return callback(null, true);
   }
 
@@ -35,7 +40,14 @@ function corsOrigin(origin, callback) {
 }
 
 // ── Middleware ──────────────────────────────────────────
-app.use(cors({ origin: corsOrigin }));
+const corsOptions = {
+  origin: corsOrigin,
+  methods: ["GET", "POST", "PUT", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(express.json());
 
 let menuCollection = null;
