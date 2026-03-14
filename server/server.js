@@ -24,7 +24,8 @@ const allowedOrigins = [
   process.env.FRONTEND_URL,
   "http://localhost:5173",
   "https://template-cafe.netlify.app",
-].filter(Boolean)
+]
+  .filter(Boolean)
   .map((origin) => origin.trim())
   .filter(Boolean);
 
