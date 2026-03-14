@@ -14,7 +14,7 @@ export function isValidMenu(menu) {
 
 export async function getMenuCollection() {
   if (!MONGODB_URI) {
-    return null;
+    throw new Error("Missing MONGODB_URI");
   }
 
   if (!menuCollectionPromise) {
@@ -33,10 +33,6 @@ export async function getMenuCollection() {
 
 export async function readMenu() {
   const collection = await getMenuCollection();
-  if (!collection) {
-    return cloneDefaultMenu();
-  }
-
   const doc = await collection.findOne({ _id: MENU_DOCUMENT_ID });
   if (!doc?.menu || !isValidMenu(doc.menu)) {
     const menu = cloneDefaultMenu();
@@ -57,10 +53,6 @@ export async function writeMenu(menu) {
   }
 
   const collection = await getMenuCollection();
-  if (!collection) {
-    return menu;
-  }
-
   await collection.updateOne(
     { _id: MENU_DOCUMENT_ID },
     { $set: { menu, updatedAt: new Date() } },

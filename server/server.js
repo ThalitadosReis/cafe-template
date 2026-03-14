@@ -25,8 +25,7 @@ let menuCollection = null;
 
 async function connectToMongo() {
   if (!MONGODB_URI) {
-    console.warn("MongoDB not configured. Falling back to default menu data.");
-    return;
+    throw new Error("Missing MONGODB_URI");
   }
 
   try {
@@ -47,9 +46,7 @@ function isValidMenu(menu) {
 }
 
 async function readMenu() {
-  if (!menuCollection) {
-    return cloneDefaultMenu();
-  }
+  if (!menuCollection) throw new Error("MongoDB is not connected");
 
   const doc = await menuCollection.findOne({ _id: MENU_DOCUMENT_ID });
   if (!doc?.menu || !isValidMenu(doc.menu)) {
@@ -70,9 +67,7 @@ async function writeMenu(menu) {
     throw new Error("Invalid menu payload");
   }
 
-  if (!menuCollection) {
-    return menu;
-  }
+  if (!menuCollection) throw new Error("MongoDB is not connected");
 
   await menuCollection.updateOne(
     { _id: MENU_DOCUMENT_ID },
@@ -138,4 +133,7 @@ Promise.all([getTransporter(), connectToMongo()]).then(() => {
   app.listen(PORT, () => {
     console.log(`🌿  BoldBrew backend listening on http://localhost:${PORT}`);
   });
+}).catch((err) => {
+  console.error("Server startup failed:", err);
+  process.exit(1);
 });
