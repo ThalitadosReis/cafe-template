@@ -533,21 +533,56 @@ export default function AdminPage() {
     () => localStorage.getItem(ADMIN_AUTH_KEY) === "true",
   );
   const [menu, setMenu] = useState([]);
+  const [menuLoaded, setMenuLoaded] = useState(false);
   const [saveStatus, setSaveStatus] = useState("idle");
   const [previewOpen, setPreviewOpen] = useState(false);
 
   useEffect(() => {
-    if (authed) setMenu(getMenu());
+    let active = true;
+
+    if (!authed) {
+      setMenuLoaded(false);
+      return () => {
+        active = false;
+      };
+    }
+
+    getMenu().then((nextMenu) => {
+      if (!active) return;
+      setMenu(nextMenu);
+      setMenuLoaded(true);
+    });
+
+    return () => {
+      active = false;
+    };
   }, [authed]);
 
   useEffect(() => {
-    if (!authed || menu.length === 0) return;
-    saveMenu(menu);
-    window.dispatchEvent(new Event("boldbrew:menuUpdated"));
-    setSaveStatus("saved");
-    const timeout = setTimeout(() => setSaveStatus("idle"), 1800);
-    return () => clearTimeout(timeout);
-  }, [menu, authed]);
+    if (!authed || !menuLoaded) return;
+
+    let active = true;
+    saveMenu(menu)
+      .then(() => {
+        if (!active) return;
+        window.dispatchEvent(new Event("boldbrew:menuUpdated"));
+        setSaveStatus("saved");
+      })
+      .catch((err) => {
+        if (!active) return;
+        console.error("Menu save failed:", err);
+        setSaveStatus("idle");
+      });
+
+    const timeout = setTimeout(() => {
+      if (active) setSaveStatus("idle");
+    }, 1800);
+
+    return () => {
+      active = false;
+      clearTimeout(timeout);
+    };
+  }, [menu, authed, menuLoaded]);
 
   useEffect(() => {
     localStorage.setItem(ADMIN_AUTH_KEY, authed ? "true" : "false");

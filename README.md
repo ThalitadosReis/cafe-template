@@ -1,6 +1,6 @@
 # [Cafe Template](https://template-cafe.netlify.app/)
 
-Modern cafe website template built with React, Vite, Tailwind CSS v4, and a small Express + Nodemailer backend for contact emails.
+Modern cafe website template built with React, Vite, Tailwind CSS v4, and a small Express backend for contact emails plus MongoDB-backed menu persistence.
 
 ## Stack
 
@@ -12,6 +12,7 @@ Modern cafe website template built with React, Vite, Tailwind CSS v4, and a smal
 - Phosphor Icons (`@phosphor-icons/react`)
 - DnD Kit (`@dnd-kit/*`)
 - Express + Nodemailer (email API)
+- MongoDB (menu persistence)
 
 ## Run Locally
 
@@ -24,6 +25,10 @@ npm run dev:server  # backend email API (Express)
 ## Environment Variables
 
 Copy `.env.example` to `.env` and configure:
+
+- `MONGODB_URI`
+- `MONGODB_DB`
+- `MONGODB_COLLECTION`
 
 - `SMTP_HOST`
 - `SMTP_PORT`
@@ -54,7 +59,8 @@ If you use Gmail SMTP, use an App Password (requires 2FA). Regular account passw
 - Global styles and tokens: `src/index.css`
 - Main page content: files in `src/pages/`
 - Footer contact/map: `src/components/Footer.jsx`
-- Menu seed/storage logic: `src/data/menu.js`
+- Menu API/storage logic: `src/data/menu.js`
+- Default menu seed: `src/data/defaultMenu.js`
 
 ## Build
 

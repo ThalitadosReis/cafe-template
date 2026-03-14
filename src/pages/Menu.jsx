@@ -10,11 +10,21 @@ export default function MenuPage() {
   const [menu, setMenu] = useState([]);
 
   useEffect(() => {
-    setMenu(getMenu());
+    let active = true;
+
+    getMenu().then((nextMenu) => {
+      if (active) setMenu(nextMenu);
+    });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   useEffect(() => {
-    const handler = () => setMenu(getMenu());
+    const handler = () => {
+      getMenu().then((nextMenu) => setMenu(nextMenu));
+    };
     window.addEventListener("boldbrew:menuUpdated", handler);
     return () => window.removeEventListener("boldbrew:menuUpdated", handler);
   }, []);
