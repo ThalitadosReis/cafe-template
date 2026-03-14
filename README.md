@@ -1,6 +1,6 @@
 # [Cafe Template](https://template-cafe.netlify.app/)
 
-Modern cafe website template built with React, Vite, Tailwind CSS v4, and an Express backend for contact emails plus MongoDB-backed menu persistence.
+Modern cafe website template built with React, Vite, Tailwind CSS v4, Netlify Functions for production APIs, and an Express backend for local development.
 
 ## Stack
 
@@ -11,7 +11,8 @@ Modern cafe website template built with React, Vite, Tailwind CSS v4, and an Exp
 - Motion (`motion`)
 - Phosphor Icons (`@phosphor-icons/react`)
 - DnD Kit (`@dnd-kit/*`)
-- Express + Nodemailer (email API)
+- Netlify Functions + Nodemailer (production email API)
+- Express + Nodemailer (local development API)
 - MongoDB (menu persistence)
 
 ## Run Locally
@@ -26,7 +27,6 @@ npm run dev:server  # backend email API (Express)
 
 Copy `.env.example` to `.env` and configure:
 
-- `VITE_API_BASE_URL` for the frontend in production
 - `MONGODB_URI`
 - `MONGODB_DB`
 - `MONGODB_COLLECTION`
@@ -71,40 +71,16 @@ npm run build
 npm run preview
 ```
 
-## Split Deployment
+## Production
 
-Recommended production setup:
+Production is configured for Netlify:
 
-- frontend on Netlify or Vercel
-- backend `server/server.js` on Render or Railway
-- MongoDB Atlas for the database
+- static frontend from `dist`
+- Netlify Functions for `/api/contact` and `/api/menu`
+- MongoDB Atlas for menu persistence
 
-Frontend env:
+Set these Netlify environment variables:
 
-- `VITE_API_BASE_URL=https://your-backend-domain`
-
-Backend env:
-
-- `FRONTEND_URL=https://your-frontend-domain`
-- or `FRONTEND_URLS=https://your-frontend-domain,https://www.your-frontend-domain`
-
-If `VITE_API_BASE_URL` is empty, the frontend falls back to same-origin `/api/...` requests for local development.
-
-## Render Backend
-
-This repo includes [render.yaml](/Users/thalitadosreis/Desktop/projects/cafe-template/render.yaml) for deploying the API on Render.
-
-Use these settings:
-
-- Root Directory: project root
-- Build Command: `npm install`
-- Start Command: `npm start`
-- Health Check Path: `/api/health`
-
-Set these Render environment variables:
-
-- `FRONTEND_URL=https://your-netlify-or-vercel-domain`
-- `FRONTEND_URLS=https://your-netlify-or-vercel-domain,https://www.your-domain.com` if you need multiple origins
 - `MONGODB_URI`
 - `MONGODB_DB=boldbrew`
 - `MONGODB_COLLECTION=menus`
@@ -114,7 +90,3 @@ Set these Render environment variables:
 - `SMTP_USER`
 - `SMTP_PASS`
 - `CONTACT_EMAIL`
-
-Then set the frontend env on Netlify/Vercel:
-
-- `VITE_API_BASE_URL=https://your-render-service.onrender.com`

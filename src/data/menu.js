@@ -5,12 +5,16 @@ const MENU_API_PATH = apiUrl("/api/menu");
 const MENU_CACHE_KEY = "boldbrew_menu_cache";
 const MENU_REQUEST_TIMEOUT_MS = 5000;
 
+function hasMenuContent(menu) {
+  return Array.isArray(menu) && menu.length > 0;
+}
+
 function cloneMenu(menu) {
   return JSON.parse(JSON.stringify(menu));
 }
 
-function hasMenuContent(menu) {
-  return Array.isArray(menu) && menu.length > 0;
+function getFallbackMenu() {
+  return cloneMenu(getCachedMenu() ?? defaultMenu);
 }
 
 function getCachedMenu() {
@@ -35,7 +39,7 @@ function setCachedMenu(menu) {
 }
 
 export function getInitialMenu() {
-  return cloneMenu(getCachedMenu() ?? defaultMenu);
+  return getFallbackMenu();
 }
 
 export async function getMenu() {
@@ -47,7 +51,7 @@ export async function getMenu() {
     setCachedMenu(menu);
     return cloneMenu(menu);
   } catch {
-    return cloneMenu(getCachedMenu() ?? defaultMenu);
+    return getFallbackMenu();
   }
 }
 

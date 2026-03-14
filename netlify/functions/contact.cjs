@@ -1,6 +1,6 @@
-const nodemailer = require("nodemailer");
 const {
   buildContactMailOptions,
+  getTransporter,
   validateContactPayload,
   logTransportPreview,
 } = require("../../server/contact-mail.cjs");
@@ -20,14 +20,6 @@ exports.handler = async (event) => {
     return json(405, { error: "Method Not Allowed" });
   }
 
-  const smtpUser = process.env.SMTP_USER?.trim();
-  const smtpPass = process.env.SMTP_PASS?.trim();
-
-  if (!smtpUser || !smtpPass) {
-    console.error("Missing SMTP credentials. Set SMTP_USER and SMTP_PASS.");
-    return json(500, { error: "Missing SMTP credentials" });
-  }
-
   let payload;
   try {
     payload = JSON.parse(event.body || "{}");
@@ -40,17 +32,8 @@ exports.handler = async (event) => {
     return json(400, { error: validation.error });
   }
 
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || "smtp.gmail.com",
-    port: Number(process.env.SMTP_PORT || 587),
-    secure: process.env.SMTP_SECURE === "true",
-    auth: {
-      user: smtpUser,
-      pass: smtpPass,
-    },
-  });
-
   try {
+    const transporter = await getTransporter();
     const info = await transporter.sendMail(
       buildContactMailOptions(validation.data),
     );

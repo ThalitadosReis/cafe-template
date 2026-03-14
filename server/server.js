@@ -57,21 +57,14 @@ async function connectToMongo() {
     throw new Error("Missing MONGODB_URI");
   }
 
-  try {
-    const client = new MongoClient(MONGODB_URI, {
-      serverSelectionTimeoutMS: MONGO_TIMEOUT_MS,
-      connectTimeoutMS: MONGO_TIMEOUT_MS,
-      socketTimeoutMS: MONGO_TIMEOUT_MS,
-    });
-    await client.connect();
-    menuCollection = client.db(MONGODB_DB).collection(MONGODB_COLLECTION);
-    console.log(`MongoDB connected: ${MONGODB_DB}.${MONGODB_COLLECTION}`);
-  } catch (err) {
-    console.error(
-      "MongoDB connection failed. Falling back to default menu data.",
-      err,
-    );
-  }
+  const client = new MongoClient(MONGODB_URI, {
+    serverSelectionTimeoutMS: MONGO_TIMEOUT_MS,
+    connectTimeoutMS: MONGO_TIMEOUT_MS,
+    socketTimeoutMS: MONGO_TIMEOUT_MS,
+  });
+  await client.connect();
+  menuCollection = client.db(MONGODB_DB).collection(MONGODB_COLLECTION);
+  console.log(`MongoDB connected: ${MONGODB_DB}.${MONGODB_COLLECTION}`);
 }
 
 function isValidMenu(menu) {
