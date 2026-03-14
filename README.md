@@ -1,4 +1,4 @@
-# Cafe Template
+# [Cafe Template](https://template-cafe.netlify.app/)
 
 Modern cafe website template built with React, Vite, Tailwind CSS v4, and a small Express + Nodemailer backend for contact emails.
 
