@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getMenu } from "../data/menu.js";
+import { getInitialMenu, getMenu } from "../data/menu.js";
 import Reveal from "../components/Reveal.jsx";
 import SectionTextBlock from "../components/ui/SectionTextBlock.jsx";
 import { useLang } from "../i18n/LangContext.jsx";
@@ -7,7 +7,7 @@ import { useLang } from "../i18n/LangContext.jsx";
 export default function MenuPage() {
   const { lang, t } = useLang();
   const copy = t.menuPage;
-  const [menu, setMenu] = useState([]);
+  const [menu, setMenu] = useState(() => getInitialMenu());
 
   useEffect(() => {
     let active = true;

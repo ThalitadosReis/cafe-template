@@ -42,7 +42,7 @@ async function connectToMongo() {
 }
 
 function isValidMenu(menu) {
-  return Array.isArray(menu);
+  return Array.isArray(menu) && menu.length > 0;
 }
 
 async function readMenu() {

@@ -1,9 +1,39 @@
 import { cloneDefaultMenu, defaultMenu } from "./defaultMenu.js";
 
 const MENU_API_PATH = "/api/menu";
+const MENU_CACHE_KEY = "boldbrew_menu_cache";
 
 function cloneMenu(menu) {
   return JSON.parse(JSON.stringify(menu));
+}
+
+function hasMenuContent(menu) {
+  return Array.isArray(menu) && menu.length > 0;
+}
+
+function getCachedMenu() {
+  try {
+    const cached = localStorage.getItem(MENU_CACHE_KEY);
+    if (!cached) return null;
+    const parsed = JSON.parse(cached);
+    return hasMenuContent(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+function setCachedMenu(menu) {
+  try {
+    if (hasMenuContent(menu)) {
+      localStorage.setItem(MENU_CACHE_KEY, JSON.stringify(menu));
+    }
+  } catch {
+    // Ignore cache write failures.
+  }
+}
+
+export function getInitialMenu() {
+  return cloneMenu(getCachedMenu() ?? defaultMenu);
 }
 
 export async function getMenu() {
@@ -11,9 +41,11 @@ export async function getMenu() {
     const response = await fetch(MENU_API_PATH);
     if (!response.ok) throw new Error("Failed to load menu");
     const payload = await response.json();
-    return cloneMenu(payload.menu ?? defaultMenu);
+    const menu = hasMenuContent(payload.menu) ? payload.menu : defaultMenu;
+    setCachedMenu(menu);
+    return cloneMenu(menu);
   } catch {
-    return cloneDefaultMenu();
+    return cloneMenu(getCachedMenu() ?? defaultMenu);
   }
 }
 
@@ -29,10 +61,17 @@ export async function saveMenu(data) {
   }
 
   const payload = await response.json();
-  return cloneMenu(payload.menu ?? data);
+  const menu = hasMenuContent(payload.menu) ? payload.menu : data;
+  setCachedMenu(menu);
+  return cloneMenu(menu);
 }
 
 export function resetMenu() {
+  try {
+    localStorage.removeItem(MENU_CACHE_KEY);
+  } catch {
+    // Ignore cache delete failures.
+  }
   return cloneDefaultMenu();
 }
 

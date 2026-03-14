@@ -9,7 +9,7 @@ const MENU_DOCUMENT_ID = "main";
 let menuCollectionPromise;
 
 export function isValidMenu(menu) {
-  return Array.isArray(menu);
+  return Array.isArray(menu) && menu.length > 0;
 }
 
 export async function getMenuCollection() {
