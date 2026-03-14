@@ -2,6 +2,7 @@ import { cloneDefaultMenu, defaultMenu } from "./defaultMenu.js";
 
 const MENU_API_PATH = "/api/menu";
 const MENU_CACHE_KEY = "boldbrew_menu_cache";
+const MENU_REQUEST_TIMEOUT_MS = 5000;
 
 function cloneMenu(menu) {
   return JSON.parse(JSON.stringify(menu));
@@ -38,7 +39,7 @@ export function getInitialMenu() {
 
 export async function getMenu() {
   try {
-    const response = await fetch(MENU_API_PATH);
+    const response = await fetchWithTimeout(MENU_API_PATH);
     if (!response.ok) throw new Error("Failed to load menu");
     const payload = await response.json();
     const menu = hasMenuContent(payload.menu) ? payload.menu : defaultMenu;
@@ -50,7 +51,7 @@ export async function getMenu() {
 }
 
 export async function saveMenu(data) {
-  const response = await fetch(MENU_API_PATH, {
+  const response = await fetchWithTimeout(MENU_API_PATH, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ menu: data }),
@@ -73,6 +74,20 @@ export function resetMenu() {
     // Ignore cache delete failures.
   }
   return cloneDefaultMenu();
+}
+
+async function fetchWithTimeout(url, options = {}) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), MENU_REQUEST_TIMEOUT_MS);
+
+  try {
+    return await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 export { defaultMenu };

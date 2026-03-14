@@ -29,7 +29,7 @@ import {
   EyeIcon,
   InfoIcon,
 } from "@phosphor-icons/react";
-import { getMenu, saveMenu, resetMenu } from "../data/menu.js";
+import { getInitialMenu, getMenu, saveMenu, resetMenu } from "../data/menu.js";
 import { useLang } from "../i18n/LangContext.jsx";
 import MenuPage from "./Menu.jsx";
 
@@ -532,7 +532,7 @@ export default function AdminPage() {
   const [authed, setAuthed] = useState(
     () => localStorage.getItem(ADMIN_AUTH_KEY) === "true",
   );
-  const [menu, setMenu] = useState([]);
+  const [menu, setMenu] = useState(() => getInitialMenu());
   const [menuLoaded, setMenuLoaded] = useState(false);
   const [saveStatus, setSaveStatus] = useState("idle");
   const [previewOpen, setPreviewOpen] = useState(false);

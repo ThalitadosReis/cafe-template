@@ -5,6 +5,7 @@ const MONGODB_URI = process.env.MONGODB_URI;
 const MONGODB_DB = process.env.MONGODB_DB || "boldbrew";
 const MONGODB_COLLECTION = process.env.MONGODB_COLLECTION || "menus";
 const MENU_DOCUMENT_ID = "main";
+const MONGO_TIMEOUT_MS = 5000;
 
 let menuCollectionPromise;
 
@@ -19,7 +20,11 @@ export async function getMenuCollection() {
 
   if (!menuCollectionPromise) {
     menuCollectionPromise = (async () => {
-      const client = new MongoClient(MONGODB_URI);
+      const client = new MongoClient(MONGODB_URI, {
+        serverSelectionTimeoutMS: MONGO_TIMEOUT_MS,
+        connectTimeoutMS: MONGO_TIMEOUT_MS,
+        socketTimeoutMS: MONGO_TIMEOUT_MS,
+      });
       await client.connect();
       return client.db(MONGODB_DB).collection(MONGODB_COLLECTION);
     })().catch((err) => {
