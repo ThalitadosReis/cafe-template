@@ -30,6 +30,7 @@ import {
 } from "@phosphor-icons/react";
 import { getMenu, saveMenu, resetMenu } from "../data/menu.js";
 import { useLang } from "../i18n/LangContext.jsx";
+import MenuPage from "./Menu.jsx";
 
 const ADMIN_AUTH_KEY = "boldbrew_admin_authed";
 const DESKTOP_ITEM_GRID_CLASS =
@@ -368,11 +369,9 @@ function AdminPreviewModal({ open, title, closeLabel, onClose }) {
             <XIcon size={18} />
           </button>
         </div>
-        <iframe
-          title="Site preview"
-          src="/menu"
-          className="h-[calc(100%-56px)] w-full border-0"
-        />
+        <div className="h-[calc(100%-56px)] overflow-y-auto">
+          <MenuPage />
+        </div>
       </div>
     </div>
   );
