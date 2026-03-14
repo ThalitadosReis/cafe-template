@@ -27,14 +27,14 @@ export default function SectionTextBlock({
       )}
       {body ? (
         <p
-          className={`font-ui text-[15px] font-light leading-relaxed text-taupe-600 lg:text-base ${bodyClassName}`}
+          className={`font-ui text-xs font-light leading-relaxed text-taupe-600 lg:text-base ${bodyClassName}`}
         >
           {body}
         </p>
       ) : null}
       {body2 ? (
         <p
-          className={`mt-4 font-ui text-[15px] font-light leading-relaxed text-taupe-600 lg:text-base ${body2ClassName}`}
+          className={`mt-4 font-ui text-xs font-light leading-relaxed text-taupe-600 lg:text-base ${body2ClassName}`}
         >
           {body2}
         </p>
