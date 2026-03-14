@@ -87,12 +87,12 @@ export const en = {
   menuPage: {
     tag: "What We Serve",
     title: "The menu",
-    location: "Zurich, Switzerland",
   },
   contactPage: {
     tag: "Get in Touch",
-    h1: "Say Hello",
+    title: "Say Hello",
     sub: "We'd love to hear from you. Send us a message and we'll get back to you within 24 hours.",
+    detailsTitle: "Where to find us",
     labels: {
       address: "Address",
       openingHours: "Opening Hours",

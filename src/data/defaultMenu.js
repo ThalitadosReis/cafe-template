@@ -33,7 +33,10 @@ export const defaultMenu = [
       {
         id: "i_e5",
         name: { en: "Cappuccino", de: "Cappuccino" },
-        desc: { en: "Rich espresso, silky foam", de: "Kräftiger Espresso, seidiger Schaum" },
+        desc: {
+          en: "Rich espresso, silky foam",
+          de: "Kräftiger Espresso, seidiger Schaum",
+        },
         price: "4.80",
       },
       {
@@ -90,7 +93,10 @@ export const defaultMenu = [
       {
         id: "i_f6",
         name: { en: "Banana Bread", de: "Bananenbrot" },
-        desc: { en: "Toasted, whipped butter", de: "Getoastet, aufgeschlagene Butter" },
+        desc: {
+          en: "Toasted, whipped butter",
+          de: "Getoastet, aufgeschlagene Butter",
+        },
         price: "6.00",
       },
     ],
@@ -129,7 +135,10 @@ export const defaultMenu = [
       {
         id: "i_d5",
         name: { en: "Chai Latte", de: "Chai Latte" },
-        desc: { en: "Spiced black tea, steamed milk", de: "Gewürzter Schwarztee, gedämpfte Milch" },
+        desc: {
+          en: "Spiced black tea, steamed milk",
+          de: "Gewürzter Schwarztee, gedämpfte Milch",
+        },
         price: "5.80",
       },
       {

@@ -13,7 +13,7 @@ export default function SectionTextBlock({
   return (
     <>
       <p
-        className={`mb-4 font-ui text-[10px] uppercase tracking-[0.4em] text-taupe-500 lg:text-xs ${labelClassName}`}
+        className={`mb-4 font-ui text-[10px] uppercase tracking-[0.3em] text-taupe-500 lg:text-xs ${labelClassName}`}
       >
         {label}
       </p>

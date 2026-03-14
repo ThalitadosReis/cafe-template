@@ -1,4 +1,9 @@
 import { useState } from "react";
+import Reveal from "../components/Reveal.jsx";
+import SectionTextBlock from "../components/ui/SectionTextBlock.jsx";
+import IconInputField from "../components/ui/IconInputField.jsx";
+import { useLang } from "../i18n/LangContext.jsx";
+import { apiUrl } from "../lib/api.js";
 import {
   ArrowRightIcon,
   CircleNotchIcon,
@@ -11,15 +16,10 @@ import {
   PaperPlaneTiltIcon,
   UserIcon,
 } from "@phosphor-icons/react";
-import Reveal from "../components/Reveal.jsx";
-import SectionTextBlock from "../components/ui/SectionTextBlock.jsx";
-import IconInputField from "../components/ui/IconInputField.jsx";
-import { useLang } from "../i18n/LangContext.jsx";
-import { apiUrl } from "../lib/api.js";
 
 export default function Contact() {
   const { t } = useLang();
-  const copy = t.contactPage;
+  const c = t.contactPage;
 
   const [form, setForm] = useState({
     name: "",
@@ -52,27 +52,54 @@ export default function Contact() {
   const infoItems = [
     {
       icon: <MapPinIcon size={16} className="text-taupe-600" />,
-      label: copy.labels.address,
-      content: copy.info.address,
-    },
-    {
-      icon: <ClockIcon size={16} className="text-taupe-600" />,
-      label: copy.labels.openingHours,
-      content: copy.info.openingHours,
+      label: c.labels.address,
+      content: c.info.address,
     },
     {
       icon: <PhoneIcon size={16} className="text-taupe-600" />,
-      label: copy.labels.phone,
-      content: copy.info.phone,
+      label: c.labels.phone,
+      content: c.info.phone,
       href: "tel:+41412234567",
     },
     {
       icon: <EnvelopeSimpleIcon size={16} className="text-taupe-600" />,
-      label: copy.labels.email,
-      content: copy.info.email,
+      label: c.labels.email,
+      content: c.info.email,
       href: "mailto:hello@boldbrew.ch",
     },
+    {
+      icon: <ClockIcon size={16} className="text-taupe-600" />,
+      label: c.labels.openingHours,
+      content: c.info.openingHours,
+    },
   ];
+  const detailsItems = [infoItems[0], infoItems[1], infoItems[2]];
+  const hoursItem = infoItems[3];
+
+  const renderInfoItem = ({ icon, label, content, href }) => (
+    <div key={label} className="flex items-start gap-4">
+      <div className="shrink-0 h-8 w-8 flex items-center justify-center rounded-full bg-taupe-100">
+        {icon}
+      </div>
+      <div>
+        <p className="mb-1 font-ui text-xs uppercase tracking-[0.18em] text-taupe-500">
+          {label}
+        </p>
+        {href ? (
+          <a
+            href={href}
+            className="whitespace-pre-line font-ui text-sm transition-colors hover:text-taupe-600"
+          >
+            {content}
+          </a>
+        ) : (
+          <p className="whitespace-pre-line font-ui text-sm font-light text-taupe-900">
+            {content}
+          </p>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <main className="min-h-screen bg-taupe-50 pt-24">
@@ -80,9 +107,9 @@ export default function Contact() {
         <div className="relative mx-auto max-w-7xl px-6 lg:px-12">
           <Reveal>
             <SectionTextBlock
-              label={copy.tag}
-              title={copy.h1}
-              body={copy.sub}
+              label={c.tag}
+              title={c.title}
+              body={c.sub}
               titleClassName="text-6xl lg:text-8xl"
             />
           </Reveal>
@@ -91,46 +118,23 @@ export default function Contact() {
 
       <section className="pb-24">
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-6 lg:grid-cols-2 lg:px-12">
-          <Reveal direction="right" className="order-2 hidden lg:block">
+          <Reveal direction="right" className="hidden lg:block">
             <div>
-              <h3 className="mb-6 font-display text-3xl font-light text-taupe-900">
-                {copy.labels.address}
+              <h3 className="mb-6 font-display text-2xl font-light text-taupe-900">
+                {c.detailsTitle}
               </h3>
 
-              <div className="space-y-6">
-                {infoItems.map(({ icon, label, content, href }) => (
-                  <div key={label} className="flex items-start gap-4">
-                    <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-taupe-100">
-                      {icon}
-                    </div>
-                    <div>
-                      <p className="mb-1 font-ui text-xs uppercase tracking-[0.18em] text-taupe-500">
-                        {label}
-                      </p>
-                      {href ? (
-                        <a
-                          href={href}
-                          className="whitespace-pre-line font-ui text-sm text-taupe-800 transition-colors hover:text-taupe-900"
-                        >
-                          {content}
-                        </a>
-                      ) : (
-                        <p className="whitespace-pre-line font-ui text-sm text-taupe-800">
-                          {content}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                ))}
+              <div className="grid gap-8 md:grid-cols-2">
+                <div className="space-y-6">
+                  {detailsItems.map(renderInfoItem)}
+                </div>
+
+                {renderInfoItem(hoursItem)}
               </div>
             </div>
           </Reveal>
 
-          <Reveal
-            direction="left"
-            delay={0.08}
-            className="order-1 lg:order-2"
-          >
+          <Reveal direction="left" delay={0.08} className="order-1 lg:order-2">
             <div className="space-y-5 rounded-3xl bg-white p-6 shadow-[0_4px_40px_rgb(44_37_32/6%)] md:p-8">
               {status === "success" ? (
                 <div className="flex min-h-105 flex-col items-center justify-center text-center">
@@ -140,51 +144,51 @@ export default function Contact() {
                     weight="light"
                   />
                   <p className="font-display text-2xl font-light text-taupe-900">
-                    {copy.success}
+                    {c.success}
                   </p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                     <IconInputField
-                      label={copy.labels.name}
+                      label={c.labels.name}
                       type="text"
                       required
                       value={form.name}
                       onChange={(value) =>
                         setForm((p) => ({ ...p, name: value }))
                       }
-                      placeholder={copy.placeholders.name}
+                      placeholder={c.placeholders.name}
                       Icon={UserIcon}
                     />
 
                     <IconInputField
-                      label={copy.labels.email}
+                      label={c.labels.email}
                       type="email"
                       required
                       value={form.email}
                       onChange={(value) =>
                         setForm((p) => ({ ...p, email: value }))
                       }
-                      placeholder={copy.placeholders.email}
+                      placeholder={c.placeholders.email}
                       Icon={EnvelopeSimpleIcon}
                     />
                   </div>
 
                   <IconInputField
-                    label={copy.labels.subject}
+                    label={c.labels.subject}
                     type="text"
                     value={form.subject}
                     onChange={(value) =>
                       setForm((p) => ({ ...p, subject: value }))
                     }
-                    placeholder={copy.placeholders.subject}
+                    placeholder={c.placeholders.subject}
                     Icon={PaperPlaneTiltIcon}
                   />
 
                   <div>
                     <label className="mb-2 block font-ui text-xs uppercase tracking-[0.2em] text-taupe-500">
-                      {copy.labels.message}
+                      {c.labels.message}
                     </label>
                     <div className="relative">
                       <ChatTextIcon
@@ -198,7 +202,7 @@ export default function Contact() {
                         onChange={(e) =>
                           setForm((p) => ({ ...p, message: e.target.value }))
                         }
-                        placeholder={copy.placeholders.message}
+                        placeholder={c.placeholders.message}
                         className="w-full resize-none rounded-xl border border-taupe-300 bg-transparent py-3 pl-10 pr-4 font-ui text-sm text-taupe-900 transition-colors focus:border-taupe-500 focus:outline-none focus:ring-0"
                       />
                     </div>
@@ -211,19 +215,19 @@ export default function Contact() {
                   >
                     {status === "loading" ? (
                       <>
-                        {copy.actions.sending}
+                        {c.actions.sending}
                         <CircleNotchIcon size={14} className="animate-spin" />
                       </>
                     ) : (
                       <>
-                        {copy.actions.send}
+                        {c.actions.send}
                         <ArrowRightIcon size={14} />
                       </>
                     )}
                   </button>
 
                   {status === "error" && (
-                    <p className="text-sm text-red-500">{copy.error}</p>
+                    <p className="text-sm text-red-500">{c.error}</p>
                   )}
                 </form>
               )}
