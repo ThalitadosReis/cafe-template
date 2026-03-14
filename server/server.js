@@ -2,13 +2,13 @@ import express from "express";
 import cors from "cors";
 import { MongoClient } from "mongodb";
 import "dotenv/config";
-import { cloneDefaultMenu } from "./src/data/defaultMenu.js";
+import { cloneDefaultMenu } from "../src/data/defaultMenu.js";
 import {
   buildContactMailOptions,
   getTransporter,
   logTransportPreview,
   validateContactPayload,
-} from "./netlify/functions/_shared-email.js";
+} from "../netlify/functions/_shared-email.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;

@@ -1,6 +1,6 @@
 # [Cafe Template](https://template-cafe.netlify.app/)
 
-Modern cafe website template built with React, Vite, Tailwind CSS v4, and a small Express backend for contact emails plus MongoDB-backed menu persistence.
+Modern cafe website template built with React, Vite, Tailwind CSS v4, and an Express backend for contact emails plus MongoDB-backed menu persistence.
 
 ## Stack
 
