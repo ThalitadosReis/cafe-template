@@ -113,6 +113,7 @@ export const de = {
       sending: 'Wird gesendet...',
     },
     success: 'Nachricht gesendet! Wir melden uns bald.',
+    error: 'Die Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es erneut oder schreiben Sie uns direkt per E-Mail.',
     info: {
       address: 'Bahnhofstrasse 12\n8001 Zurich',
       openingHours: 'Mo–Fr: 07:30–18:00\nSamstag: 08:00–17:00\nSonntag geschlossen',

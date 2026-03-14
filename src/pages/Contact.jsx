@@ -44,10 +44,7 @@ export default function Contact() {
         throw new Error();
       }
     } catch {
-      setTimeout(() => {
-        setStatus("success");
-        setForm({ name: "", email: "", subject: "", message: "" });
-      }, 1200);
+      setStatus("error");
     }
   };
 
@@ -223,6 +220,10 @@ export default function Contact() {
                       </>
                     )}
                   </button>
+
+                  {status === "error" && (
+                    <p className="text-sm text-red-500">{copy.error}</p>
+                  )}
                 </form>
               )}
             </div>

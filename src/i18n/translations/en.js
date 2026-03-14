@@ -113,6 +113,7 @@ export const en = {
       sending: "Sending...",
     },
     success: "Message sent! We'll be in touch soon.",
+    error: "Message failed to send. Please try again or email us directly.",
     info: {
       address: "Bahnhofstrasse 12\n8001 Zurich",
       openingHours:
