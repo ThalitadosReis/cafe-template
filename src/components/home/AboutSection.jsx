@@ -1,8 +1,19 @@
 import { motion } from "motion/react";
-import Reveal from "../Reveal.jsx";
+import Reveal, { EASE } from "../Reveal.jsx";
 import Label from "../ui/Label.jsx";
 
-const EASE = [0.22, 1, 0.36, 1];
+function InteriorPhoto({ alt, className = "" }) {
+  return (
+    <>
+      <img
+        src="https://images.pexels.com/photos/4790046/pexels-photo-4790046.jpeg?w=1000&q=85"
+        alt={alt}
+        className={`h-full w-full object-cover object-center ${className}`}
+      />
+      <div className="absolute inset-0 bg-taupe-900/45" />
+    </>
+  );
+}
 
 export default function AboutSection({ copy }) {
   return (
@@ -14,12 +25,7 @@ export default function AboutSection({ copy }) {
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 1, delay: 0.2, ease: EASE }}
       >
-        <img
-          src="https://images.pexels.com/photos/4790046/pexels-photo-4790046.jpeg?w=1000&q=85"
-          alt={copy.interiorAlt}
-          className="h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-taupe-900/45" />
+        <InteriorPhoto alt={copy.interiorAlt} />
       </motion.div>
 
       <div className="mx-auto max-w-7xl px-6 lg:px-12">
@@ -38,12 +44,7 @@ export default function AboutSection({ copy }) {
       </div>
 
       <div className="relative h-80 overflow-hidden lg:hidden">
-        <img
-          src="https://images.pexels.com/photos/4790046/pexels-photo-4790046.jpeg?w=900&q=85"
-          alt={copy.interiorAlt}
-          className="absolute inset-0 h-full w-full object-cover object-center"
-        />
-        <div className="absolute inset-0 bg-taupe-900/45" />
+        <InteriorPhoto alt={copy.interiorAlt} className="absolute inset-0" />
       </div>
     </section>
   );

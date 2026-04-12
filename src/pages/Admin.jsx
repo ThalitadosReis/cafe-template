@@ -853,6 +853,7 @@ export default function AdminPage() {
               catIdx={catIdx}
               onUpdateItem={handleUpdateItem}
               onRemoveItem={handleRemoveItem}
+              onRemoveCategory={handleRemoveCategory}
               onDragEnd={handleDragEnd}
               onUpdateLabel={handleUpdateLabel}
               text={copy}
@@ -861,7 +862,7 @@ export default function AdminPage() {
 
           <button
             onClick={handleAddCategory}
-            className="flex w-full items-center justify-center gap-2 rounded-full border border-dashed border-taupe-400 py-4 text-xs uppercase tracking-widest text-taupe-600 transition-colors hover:border-taupe-700 hover:text-taupe-700"
+            className="flex w-full items-center justify-center gap-2 border border-dashed border-taupe-400 py-4 font-body text-xs uppercase tracking-widest text-taupe-600 transition-colors hover:border-taupe-700 hover:text-taupe-700"
           >
             <PlusIcon size={13} /> {copy.headers.addCategory}
           </button>

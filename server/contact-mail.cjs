@@ -42,74 +42,115 @@ function validateContactPayload(payload) {
 }
 
 function buildContactMailOptions({ name, email, subject, message }) {
-  const shellStyle = "width:100%;padding:32px 16px;background:#f5f3ef;";
-  const cardStyle =
-    "max-width:640px;margin:0 auto;background:#ffffff;border:1px solid #e8e3db;border-radius:20px;overflow:hidden;box-shadow:0 8px 24px rgba(24,24,24,0.04);";
-  const heroStyle =
-    "padding:32px 32px 24px;background:#ffffff;border-bottom:1px solid #ece7e0;";
-  const kickerStyle =
-    "margin:0 0 12px;color:#8a8178;font-size:11px;font-weight:600;line-height:1;letter-spacing:0.18em;text-transform:uppercase;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;";
-  const titleStyle =
-    "margin:0;color:#181818;font-size:30px;font-weight:600;line-height:1.12;letter-spacing:-0.03em;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;";
-  const introStyle =
-    "margin:12px 0 0;max-width:480px;color:#6f6a64;font-size:14px;line-height:1.7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;";
-  const panelStyle =
-    "margin:24px 28px 0;padding:10px 20px;background:#faf8f5;border:1px solid #ece7e0;border-radius:14px;";
-  const rowStyle =
-    "width:100%;margin:0;padding:14px 0;border-bottom:1px solid #ece7e0;font-size:0;";
-  const lastRowStyle = `${rowStyle}border-bottom:0;`;
-  const labelStyle =
-    "display:inline-block;vertical-align:top;width:110px;color:#8a8178;font-size:10px;font-weight:700;line-height:1.6;letter-spacing:0.14em;text-transform:uppercase;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;";
-  const valueStyle =
-    "display:inline-block;vertical-align:top;width:calc(100% - 110px);color:#222222;font-size:14px;font-weight:500;line-height:1.6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;";
-  const messageWrapStyle = "padding:24px 28px 0;";
-  const sectionTitleStyle =
-    "margin:0 0 10px;color:#8a8178;font-size:10px;font-weight:700;line-height:1;letter-spacing:0.14em;text-transform:uppercase;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;";
-  const messageBodyStyle =
-    "padding:18px 20px;background:#faf8f5;border:1px solid #ece7e0;border-radius:14px;color:#272727;font-size:14px;line-height:1.8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;";
-  const footnoteStyle =
-    "margin:22px 28px 30px;color:#9a9289;font-size:12px;line-height:1.6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;";
-  const linkStyle = "color:#1f1f1f;text-decoration:none;";
+  // brand palette
+  const C = {
+    bg: "#faf8f4",
+    card: "#ffffff",
+    border: "#e8ded4",
+    divider: "#ede6db",
+    espresso: "#3c2e22",
+    dark: "#5b4a3e",
+    mid: "#8a8077",
+    light: "#cbbfaf",
+    muted: "#f6f2eb",
+  };
+
+  const sans = "Georgia,'Times New Roman',serif";
+  const ui = "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif";
 
   const emailContent = `
-    <div class="email-shell" style="${shellStyle}">
-      <div class="email-card" style="${cardStyle}">
-        <div class="email-hero" style="${heroStyle}">
-          <p class="email-kicker" style="${kickerStyle}">BoldBrew Contact</p>
-          <h1 class="email-title" style="${titleStyle}">New Message Received</h1>
-          <p class="email-intro" style="${introStyle}">
-            A new message was submitted through the website contact form.
+  <div style="width:100%;background:${C.bg};padding:40px 16px;font-family:${ui};">
+    <div style="max-width:600px;margin:0 auto;">
+
+      <!-- header bar -->
+      <div style="padding:0 0 24px 0;">
+        <p style="margin:0;font-size:10px;letter-spacing:0.28em;text-transform:uppercase;color:${C.mid};font-family:${ui};">
+          BoldBrew · Café &amp; More
+        </p>
+      </div>
+
+      <!-- card -->
+      <div style="background:${C.card};border:1px solid ${C.border};">
+
+        <!-- hero -->
+        <div style="padding:40px 40px 32px;border-bottom:1px solid ${C.divider};">
+          <h1 style="margin:0 0 10px;font-family:${sans};font-size:34px;font-weight:400;font-style:italic;line-height:1.12;color:${C.espresso};">
+            New message
+          </h1>
+          <p style="margin:0;font-size:13px;line-height:1.7;color:${C.mid};font-family:${ui};">
+            Submitted via the contact form on boldbrew.ch
           </p>
         </div>
 
-        <div class="email-panel" style="${panelStyle}">
-          <div class="email-row" style="${rowStyle}">
-            <span class="email-label" style="${labelStyle}">Name</span>
-            <span class="email-value" style="${valueStyle}">${name}</span>
-          </div>
-          <div class="email-row" style="${subject ? rowStyle : lastRowStyle}">
-            <span class="email-label" style="${labelStyle}">Email</span>
-            <span class="email-value" style="${valueStyle}"><a href="mailto:${email}" style="${linkStyle}">${email}</a></span>
-          </div>
-          ${
-            subject
-              ? `<div class="email-row" style="${lastRowStyle}">
-            <span class="email-label" style="${labelStyle}">Subject</span>
-            <span class="email-value" style="${valueStyle}">${subject}</span>
-          </div>`
-              : ""
-          }
+        <!-- sender details -->
+        <div style="padding:32px 40px 0;">
+          <p style="margin:0 0 16px;font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:${C.light};font-family:${ui};">
+            Sender
+          </p>
+
+          <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td style="padding:12px 0;border-bottom:1px solid ${C.divider};font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:${C.mid};font-family:${ui};width:90px;vertical-align:top;">
+                Name
+              </td>
+              <td style="padding:12px 0 12px 16px;border-bottom:1px solid ${C.divider};font-size:14px;color:${C.espresso};font-family:${ui};vertical-align:top;">
+                ${name}
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:12px 0;border-bottom:1px solid ${subject ? C.divider : "transparent"};font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:${C.mid};font-family:${ui};width:90px;vertical-align:top;">
+                Email
+              </td>
+              <td style="padding:12px 0 12px 16px;border-bottom:1px solid ${subject ? C.divider : "transparent"};font-size:14px;font-family:${ui};vertical-align:top;">
+                <a href="mailto:${email}" style="color:${C.dark};text-decoration:none;">${email}</a>
+              </td>
+            </tr>
+            ${
+              subject
+                ? `
+            <tr>
+              <td style="padding:12px 0;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:${C.mid};font-family:${ui};width:90px;vertical-align:top;">
+                Subject
+              </td>
+              <td style="padding:12px 0 12px 16px;font-size:14px;color:${C.espresso};font-family:${ui};vertical-align:top;">
+                ${subject}
+              </td>
+            </tr>`
+                : ""
+            }
+          </table>
         </div>
 
-        <div class="email-message" style="${messageWrapStyle}">
-          <p class="email-section-title" style="${sectionTitleStyle}">Message</p>
-          <div class="email-message-body" style="${messageBodyStyle}">${String(message).replace(/\n/g, "<br>")}</div>
+        <!-- message -->
+        <div style="padding:32px 40px 40px;">
+          <p style="margin:0 0 16px;font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:${C.light};font-family:${ui};">
+            Message
+          </p>
+          <div style="background:${C.muted};border-left:2px solid ${C.border};padding:20px 24px;">
+            <p style="margin:0;font-family:${sans};font-size:15px;font-style:italic;line-height:1.8;color:${C.dark};">
+              ${String(message).replace(/\n/g, "<br>")}
+            </p>
+          </div>
         </div>
 
-        <p class="email-footnote" style="${footnoteStyle}">Sent via the contact form at boldbrew.ch</p>
+        <!-- reply CTA -->
+        <div style="padding:0 40px 40px;">
+          <a href="mailto:${email}" style="display:inline-block;background:${C.espresso};color:#faf8f4;font-family:${ui};font-size:10px;letter-spacing:0.22em;text-transform:uppercase;text-decoration:none;padding:12px 24px;">
+            Reply to ${name}
+          </a>
+        </div>
+
       </div>
+
+      <!-- footer -->
+      <div style="padding:24px 0 0;text-align:left;">
+        <p style="margin:0;font-size:11px;color:${C.light};font-family:${ui};line-height:1.6;">
+          BoldBrew · Bahnhofstrasse 12, 8001 Zurich · hello@boldbrew.ch
+        </p>
+      </div>
+
     </div>
-  `;
+  </div>`;
 
   return {
     from: `"BoldBrew Website" <${process.env.SMTP_USER || "noreply@boldbrew.ch"}>`,

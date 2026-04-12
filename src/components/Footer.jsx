@@ -114,17 +114,17 @@ export default function Footer() {
 
       <div className="border-t border-taupe-300 py-5 px-6 lg:px-12">
         <div className="max-w-7xl mx-auto flex flex-col items-center gap-2 md:flex-row md:items-center md:justify-between">
-          <p className="text-xs text-taupe-700">
+          <p className="text-xs text-taupe-600">
             © {new Date().getFullYear()} BoldBrew. {c.rights}
           </p>
           <a
             href="https://thalitadosreis.ch/"
             target="_blank"
             rel="noreferrer"
-            className="text-xs text-taupe-700 transition-colors hover:text-taupe-900 inline-flex items-center gap-1"
+            className="text-xs text-taupe-600 transition-colors hover:text-taupe-900 inline-flex items-center gap-1"
           >
             Made by Thalita dos Reis
-            <ArrowUpRightIcon size={11} />
+            <ArrowUpRightIcon size={11} aria-hidden="true" />
           </a>
         </div>
       </div>

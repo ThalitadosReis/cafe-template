@@ -1,13 +1,49 @@
-@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400;1,9..144,500&family=Jost:wght@300;400;500;700&display=swap");
 
 @import "tailwindcss";
 
 @theme {
-  --font-display: "Cormorant Garamond", Georgia, serif;
-  --font-ui: "DM Sans", system-ui, sans-serif;
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Jost", system-ui, sans-serif;
+
+  --color-taupe-900: #3c2e22;
+  --color-taupe-800: #4a3a2e;
+  --color-taupe-700: #5b4a3e;
+  --color-taupe-600: #6b5f55;
+  --color-taupe-500: #8a8077;
+  --color-taupe-400: #cbbfaf;
+  --color-taupe-300: #d9cfc1;
+  --color-taupe-200: #e8ded4;
+  --color-taupe-100: #f6f2eb;
+  --color-taupe-50: #faf8f4;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-taupe-50);
+  color: var(--color-taupe-700);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 input:-webkit-autofill {
   -webkit-box-shadow: 0 0 0px 1000px transparent inset;
   transition: background-color 5000s ease-in-out 0s;
+}
+
+/* nav underline slide */
+.nav-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: right bottom;
+  background-repeat: no-repeat;
+  transition: background-size 0.38s cubic-bezier(0.16, 1, 0.3, 1), color 0.5s;
+}
+
+.nav-underline:hover {
+  background-size: 100% 1px;
+  background-position: left bottom;
 }

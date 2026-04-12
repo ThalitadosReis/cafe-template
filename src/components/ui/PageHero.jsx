@@ -1,6 +1,5 @@
 import { motion } from "motion/react";
-
-const EASE = [0.22, 1, 0.36, 1];
+import { EASE } from "../Reveal.jsx";
 
 export default function PageHero({ tag, title, sub, src, alt }) {
   return (

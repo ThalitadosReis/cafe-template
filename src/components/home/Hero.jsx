@@ -2,8 +2,7 @@ import { motion } from "motion/react";
 import CtaLink from "../ui/CtaLink.jsx";
 import Label from "../ui/Label.jsx";
 import { useLang } from "../../i18n/LangContext.jsx";
-
-const EASE = [0.22, 1, 0.36, 1];
+import { EASE } from "../../components/Reveal.jsx";
 
 function FadeIn({
   as: Tag = motion.div,
@@ -32,7 +31,7 @@ export default function Hero({ copy }) {
 
   return (
     <section className="relative overflow-hidden">
-      <div className="absolute inset-x-0 top-0 bottom-24 md:bottom-28">
+      <div className="absolute inset-0">
         <img
           src="https://images.pexels.com/photos/4790059/pexels-photo-4790059.jpeg?w=1600&q=85"
           alt="Café atmosphere"
@@ -54,42 +53,54 @@ export default function Hero({ copy }) {
         </FadeIn>
       </div>
 
-      <div className="relative z-10 bg-taupe-50 px-6 pb-8 pt-32 sm:pt-20 md:pb-10 md:pt-20">
-        <div className="absolute left-1/2 top-6 md:top-0 -translate-x-1/2 -translate-y-1/2">
-          <div className="mx-auto flex max-w-4xl flex-col items-center justify-center gap-4 sm:flex-row sm:items-end sm:gap-10 md:gap-16">
-            <FadeIn delay={0.9} className="order-2 sm:order-1">
-              <CtaLink
-                to="/menu"
-                variant="secondary"
-                className="min-w-44 justify-center"
-              >
-                {copy.cta}
-              </CtaLink>
-            </FadeIn>
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.5, ease: EASE }}
-              className="order-1 h-32 w-32 overflow-hidden sm:order-2"
-            >
-              <img
-                src="/boldbrew-logo.png"
-                alt="BoldBrew logo"
-                className="h-full w-full"
-              />
-            </motion.div>
-
-            <FadeIn delay={0.9} className="order-3 hidden sm:block">
-              <CtaLink
-                to="/contact"
-                variant="outline"
-                className="min-w-44 justify-center"
-              >
-                {t.nav.contact}
-              </CtaLink>
-            </FadeIn>
+      <div className="relative z-10 bg-taupe-50 px-6 pb-8 md:pb-10">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.5, ease: EASE }}
+          className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2"
+        >
+          <div className="h-32 w-32 overflow-hidden">
+            <img
+              src="/boldbrew-logo.png"
+              alt="BoldBrew logo"
+              className="h-full w-full"
+            />
           </div>
+        </motion.div>
+
+        {/* mobile */}
+        <div className="flex flex-col items-center pt-20 md:hidden">
+          <FadeIn delay={0.9}>
+            <CtaLink to="/menu" variant="secondary" className="justify-center">
+              {copy.cta}
+            </CtaLink>
+          </FadeIn>
+        </div>
+
+        {/* desktop */}
+        <div className="mx-auto hidden items-end justify-between gap-12 md:flex">
+          <FadeIn delay={0.9} className="flex flex-1 justify-end">
+            <CtaLink
+              to="/menu"
+              variant="secondary"
+              className="min-w-44 justify-center"
+            >
+              {copy.cta}
+            </CtaLink>
+          </FadeIn>
+
+          <div className="h-16 w-32 shrink-0" aria-hidden="true" />
+
+          <FadeIn delay={0.9} className="hidden flex-1 md:block">
+            <CtaLink
+              to="/contact"
+              variant="outline"
+              className="min-w-44 justify-center"
+            >
+              {t.nav.contact}
+            </CtaLink>
+          </FadeIn>
         </div>
       </div>
     </section>

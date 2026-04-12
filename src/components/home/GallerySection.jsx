@@ -11,6 +11,19 @@ const GALLERY_PHOTOS = [
   "https://images.pexels.com/photos/4790057/pexels-photo-4790057.jpeg?auto=compress&cs=tinysrgb&w=800",
 ];
 
+function GalleryPhoto({ src, alt, className = "", imgClassName = "" }) {
+  return (
+    <div className={`relative ${className}`}>
+      <img
+        src={src}
+        alt={alt}
+        className={`w-full object-cover ${imgClassName}`}
+      />
+      <div className="absolute inset-0 bg-taupe-900/45" />
+    </div>
+  );
+}
+
 export default function GallerySection({ copy }) {
   return (
     <section className="bg-taupe-50 py-32">
@@ -24,6 +37,7 @@ export default function GallerySection({ copy }) {
               href="https://instagram.com"
               target="_blank"
               rel="noreferrer"
+              aria-label={`${copy.cta} (opens in new tab)`}
               className="inline-flex items-center gap-2 border-b border-dashed border-taupe-400 pb-1 font-body text-[11px] uppercase tracking-[0.2em] text-taupe-700 transition-colors duration-300 hover:text-taupe-500"
             >
               <InstagramLogoIcon size={16} />
@@ -35,70 +49,52 @@ export default function GallerySection({ copy }) {
         <Reveal threshold={0.05}>
           <div className="grid grid-cols-2 gap-2 md:hidden">
             {GALLERY_PHOTOS.map((src, index) => (
-              <div key={src} className="relative">
-                <img
-                  src={src}
-                  alt={copy.photoAlts?.[index] ?? `Gallery ${index + 1}`}
-                  className="aspect-square w-full object-cover"
-                />
-                <div className="absolute inset-0 bg-taupe-900/45" />
-              </div>
+              <GalleryPhoto
+                key={src}
+                src={src}
+                alt={copy.photoAlts?.[index] ?? `Gallery ${index + 1}`}
+                imgClassName="aspect-square"
+              />
             ))}
           </div>
 
           <div className="hidden md:grid md:grid-cols-2 md:gap-2">
             <div className="grid grid-cols-2 gap-2">
-              <div className="relative col-span-2">
-                <img
-                  src={GALLERY_PHOTOS[0]}
-                  alt={copy.photoAlts?.[0] ?? "Gallery 1"}
-                  className="col-span-2 aspect-16/10 object-cover"
-                />
-                <div className="absolute inset-0 bg-taupe-900/45" />
-              </div>
-              <div className="relative">
-                <img
-                  src={GALLERY_PHOTOS[1]}
-                  alt={copy.photoAlts?.[1] ?? "Gallery 2"}
-                  className="aspect-square object-cover"
-                />
-                <div className="absolute inset-0 bg-taupe-900/45" />
-              </div>
-              <div className="relative">
-                <img
-                  src={GALLERY_PHOTOS[2]}
-                  alt={copy.photoAlts?.[2] ?? "Gallery 3"}
-                  className="aspect-square object-cover"
-                />
-                <div className="absolute inset-0 bg-taupe-900/45" />
-              </div>
+              <GalleryPhoto
+                src={GALLERY_PHOTOS[0]}
+                alt={copy.photoAlts?.[0] ?? "Gallery 1"}
+                className="col-span-2"
+                imgClassName="aspect-[16/10]"
+              />
+              <GalleryPhoto
+                src={GALLERY_PHOTOS[1]}
+                alt={copy.photoAlts?.[1] ?? "Gallery 2"}
+                imgClassName="aspect-square"
+              />
+              <GalleryPhoto
+                src={GALLERY_PHOTOS[2]}
+                alt={copy.photoAlts?.[2] ?? "Gallery 3"}
+                imgClassName="aspect-square"
+              />
             </div>
 
             <div className="grid grid-cols-2 gap-2">
-              <div className="relative">
-                <img
-                  src={GALLERY_PHOTOS[3]}
-                  alt={copy.photoAlts?.[3] ?? "Gallery 4"}
-                  className="aspect-square object-cover"
-                />
-                <div className="absolute inset-0 bg-taupe-900/45" />
-              </div>
-              <div className="relative">
-                <img
-                  src={GALLERY_PHOTOS[4]}
-                  alt={copy.photoAlts?.[4] ?? "Gallery 5"}
-                  className="aspect-square object-cover"
-                />
-                <div className="absolute inset-0 bg-taupe-900/45" />
-              </div>
-              <div className="relative col-span-2">
-                <img
-                  src={GALLERY_PHOTOS[5]}
-                  alt={copy.photoAlts?.[5] ?? "Gallery 6"}
-                  className="col-span-2 aspect-16/10 object-cover"
-                />
-                <div className="absolute inset-0 bg-taupe-900/45" />
-              </div>
+              <GalleryPhoto
+                src={GALLERY_PHOTOS[3]}
+                alt={copy.photoAlts?.[3] ?? "Gallery 4"}
+                imgClassName="aspect-square"
+              />
+              <GalleryPhoto
+                src={GALLERY_PHOTOS[4]}
+                alt={copy.photoAlts?.[4] ?? "Gallery 5"}
+                imgClassName="aspect-square"
+              />
+              <GalleryPhoto
+                src={GALLERY_PHOTOS[5]}
+                alt={copy.photoAlts?.[5] ?? "Gallery 6"}
+                className="col-span-2"
+                imgClassName="aspect-[16/10]"
+              />
             </div>
           </div>
         </Reveal>

@@ -1,5 +1,7 @@
 import { motion } from "motion/react";
 
+export const EASE = [0.22, 1, 0.36, 1];
+
 export default function Reveal({
   children,
   direction = "up",
@@ -26,7 +28,7 @@ export default function Reveal({
       transition={{
         duration,
         delay,
-        ease: [0.22, 1, 0.36, 1],
+        ease: EASE,
       }}
     >
       {children}
