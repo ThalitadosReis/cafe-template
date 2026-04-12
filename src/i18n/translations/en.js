@@ -77,6 +77,30 @@ export const en = {
         "Latte close up",
       ],
     },
+    testimonials: {
+      tag: "Guest Stories",
+      h2: "What Our\nGuests Say",
+      items: [
+        {
+          quote:
+            "BoldBrew is my daily ritual. The coffee is exceptional — the kind of place that makes you want to slow down and savour every sip.",
+          name: "Sarah M.",
+          source: "Regular Guest",
+        },
+        {
+          quote:
+            "The seasonal menu is a delight. Honest ingredients, beautifully put together. I always leave feeling nourished in every sense.",
+          name: "Jonas W.",
+          source: "Google Review",
+        },
+        {
+          quote:
+            "A rare find in Zurich — a café that genuinely cares about craft. The space is warm, the team is wonderful, and the espresso is perfect.",
+          name: "Lena R.",
+          source: "Tripadvisor",
+        },
+      ],
+    },
     contact: {
       tag: "Get in Touch",
       h2: "We'd Love\nto Hear from You",

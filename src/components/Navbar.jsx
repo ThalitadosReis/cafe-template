@@ -1,12 +1,29 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
-import { ListIcon, XIcon, ArrowRightIcon } from "@phosphor-icons/react";
+import { ListIcon, XIcon } from "@phosphor-icons/react";
 import { useLang } from "../i18n/LangContext.jsx";
-import CtaLink from "./ui/CtaLink.jsx";
 
 const ADMIN_CLICKS = 5;
 const ADMIN_TIMEOUT = 3000;
+const DARK_HERO_PATHS = ["/", "/menu", "/contact"];
+
+function Brand({ brand, subBrand, dark = false }) {
+  return (
+    <div className="flex flex-col leading-none">
+      <span
+        className={`font-display text-xl font-light uppercase tracking-[0.15em] ${dark ? "text-taupe-100" : "text-taupe-900"}`}
+      >
+        {brand}
+      </span>
+      <span
+        className={`font-body text-[9px] font-light uppercase tracking-[0.35em] ${dark ? "text-taupe-400" : "text-taupe-500"}`}
+      >
+        {subBrand}
+      </span>
+    </div>
+  );
+}
 
 export default function Navbar() {
   const { t, lang, setLang } = useLang();
@@ -17,10 +34,28 @@ export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const isDarkHero =
+    DARK_HERO_PATHS.includes(location.pathname) && !scrolled && !open;
+
   const navLinks = [
     { to: "/", label: t.nav.home },
     { to: "/menu", label: t.nav.menu },
+    { to: "/contact", label: t.nav.contact },
   ];
+
+  const isActive = (path) =>
+    path === "/"
+      ? location.pathname === "/"
+      : location.pathname.startsWith(path);
+
+  const linkCls = (path) => {
+    const active = isActive(path);
+    return `font-body text-[11px] uppercase tracking-[0.22em] ${
+      active
+        ? `transition-colors duration-500 ${isDarkHero ? "text-taupe-100 border-b border-taupe-100 pb-px" : "text-taupe-900 border-b border-taupe-900 pb-px"}`
+        : `nav-underline ${isDarkHero ? "text-taupe-400 hover:text-taupe-100" : "text-taupe-600 hover:text-taupe-900"}`
+    }`;
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30);
@@ -40,115 +75,99 @@ export default function Navbar() {
     };
   }, [open]);
 
-  const isActive = (path) =>
-    path === "/"
-      ? location.pathname === "/"
-      : location.pathname.startsWith(path);
-
-  const scrollToPageTop = useCallback(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  const scrollToTop = useCallback(() => {
+    window.scrollTo({ top: 0, behavior: "auto" });
   }, []);
 
-  const handleNavInteraction = useCallback(() => {
+  const handleNav = useCallback(() => {
     setOpen(false);
-    scrollToPageTop();
-  }, [scrollToPageTop]);
+    scrollToTop();
+  }, [scrollToTop]);
 
   const handleLangToggle = useCallback(() => {
     setOpen(false);
-    setLang((currentLang) => (currentLang === "en" ? "de" : "en"));
+    setLang((l) => (l === "en" ? "de" : "en"));
   }, [setLang]);
 
   const handleLogoClick = useCallback(
     (e) => {
-      handleNavInteraction();
+      handleNav();
       const next = clickCount + 1;
       if (next >= ADMIN_CLICKS) {
         e.preventDefault();
         setClickCount(0);
         clearTimeout(clickTimerRef.current);
         navigate("/admin");
-        scrollToPageTop();
+        scrollToTop();
         return;
       }
-
       setClickCount(next);
       clearTimeout(clickTimerRef.current);
       clickTimerRef.current = setTimeout(() => setClickCount(0), ADMIN_TIMEOUT);
     },
-    [clickCount, handleNavInteraction, navigate, scrollToPageTop],
+    [clickCount, handleNav, navigate, scrollToTop],
   );
 
-  useEffect(
-    () => () => {
-      clearTimeout(clickTimerRef.current);
-    },
-    [],
-  );
+  useEffect(() => () => clearTimeout(clickTimerRef.current), []);
 
   return (
     <>
       <header
-        className={`fixed left-0 right-0 top-0 z-50 transition-all duration-500 ${
+        className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
           scrolled || open
-            ? "bg-taupe-100/95 backdrop-blur-sm"
-            : "bg-transparent"
+            ? "border-b border-taupe-200 bg-taupe-50/95 backdrop-blur-sm"
+            : "border-b border-transparent bg-transparent"
         }`}
       >
         <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-12">
+          {/* logo */}
           <Link
             to="/"
             onClick={handleLogoClick}
             className="flex select-none flex-col leading-none"
           >
-            <span className="font-display text-xl font-light uppercase tracking-[0.15em] text-taupe-900">
-              {t.nav.brand}
-            </span>
-            <span className="font-ui text-[9px] font-light uppercase tracking-[0.35em] text-taupe-500">
-              {t.nav.subBrand}
-            </span>
+            <Brand
+              brand={t.nav.brand}
+              subBrand={t.nav.subBrand}
+              dark={isDarkHero}
+            />
           </Link>
 
-          <div className="hidden items-center gap-8 md:flex">
+          {/* desktop nav */}
+          <div className="hidden items-center gap-6 md:flex">
             {navLinks.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
-                onClick={handleNavInteraction}
-                className={`text-[11px] uppercase tracking-[0.22em] transition-colors duration-300 ${
-                  isActive(link.to)
-                    ? "text-taupe-900"
-                    : "text-taupe-600 hover:text-taupe-900"
-                }`}
+                onClick={handleNav}
+                className={linkCls(link.to)}
               >
                 {link.label}
               </Link>
             ))}
 
-            <CtaLink
-              to="/contact"
-              onClick={handleNavInteraction}
-              variant="outline"
-              showIcon={false}
-              className="px-6 py-2.5"
-            >
-              {t.nav.contact}
-            </CtaLink>
-
-            <button
-              onClick={handleLangToggle}
-              className="border-b border-dashed border-taupe-500 text-[11px] uppercase tracking-[0.22em] text-taupe-600 transition-colors duration-300 hover:text-taupe-900"
-            >
-              {lang === "en" ? "DE" : "EN"}
-            </button>
+            <div className="flex items-center gap-3">
+              <span
+                className={`select-none text-[11px] transition-colors duration-500 ${isDarkHero ? "text-taupe-600" : "text-taupe-300"}`}
+              >
+                |
+              </span>
+              <button
+                onClick={handleLangToggle}
+                className={`nav-underline font-body text-[11px] uppercase tracking-[0.22em] ${isDarkHero ? "text-taupe-400 hover:text-taupe-100" : "text-taupe-600 hover:text-taupe-900"}`}
+              >
+                {lang === "en" ? "DE" : "EN"}
+              </button>
+            </div>
           </div>
 
+          {/* mobile toggle */}
           <button
-            className="text-taupe-700 transition-colors duration-300 hover:text-taupe-900 md:hidden"
+            className={`transition-colors duration-500 md:hidden ${isDarkHero ? "text-taupe-200 hover:text-taupe-100" : "text-taupe-600 hover:text-taupe-900"}`}
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? t.nav.closeMenu : t.nav.openMenu}
           >
-            {open ? <XIcon size={22} /> : <ListIcon size={22} />}
+            <ListIcon size={22} />
           </button>
         </nav>
       </header>
@@ -156,89 +175,108 @@ export default function Navbar() {
       <AnimatePresence>
         {open && (
           <>
-            <motion.div
-              className="fixed inset-0 z-60 bg-taupe-900/45 backdrop-blur-sm md:hidden"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              onClick={() => setOpen(false)}
-            />
-
             <motion.aside
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
+              initial={{ opacity: 0, scale: 1.04 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, y: -24, scale: 0.98 }}
               transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-              className="fixed inset-0 z-70 flex flex-col bg-taupe-100 md:hidden"
+              className="fixed inset-0 z-70 flex flex-col overflow-hidden md:hidden"
             >
-              <div className="flex h-20 items-center justify-between border-b border-taupe-300 px-6">
-                <div className="flex flex-col leading-none">
-                  <span className="font-display text-lg font-light uppercase tracking-[0.15em] text-taupe-900">
-                    {t.nav.brand}
-                  </span>
-                  <span className="font-ui text-[9px] font-light uppercase tracking-[0.3em] text-taupe-500">
-                    {t.nav.subBrand}
-                  </span>
-                </div>
+              {/* bg image */}
+              <div className="absolute inset-0">
+                <img
+                  src="https://images.pexels.com/photos/4792698/pexels-photo-4792698.jpeg?w=1200&q=85"
+                  alt=""
+                  className="h-full w-full object-cover"
+                />
+                <div className="absolute inset-0 bg-taupe-900/80" />
+              </div>
+
+              {/* header */}
+              <div className="relative z-10 flex h-20 items-center justify-between px-6">
+                <Brand brand={t.nav.brand} subBrand={t.nav.subBrand} dark />
                 <button
                   onClick={() => setOpen(false)}
-                  className="text-taupe-700 transition-colors duration-300 hover:text-taupe-900"
+                  className="text-taupe-400 transition-colors duration-300 hover:text-taupe-100"
                   aria-label={t.nav.closeMenu}
                 >
-                  <XIcon size={22} />
+                  <XIcon size={20} />
                 </button>
               </div>
 
-              <nav className="flex flex-1 flex-col justify-center px-6">
-                {[...navLinks, { to: "/contact", label: t.nav.contact }].map(
-                  (link, i) => (
-                    <motion.div
-                      key={link.to}
-                      initial={{ opacity: 0, x: 16 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{
-                        duration: 0.3,
-                        delay: 0.08 + i * 0.07,
-                        ease: [0.22, 1, 0.36, 1],
-                      }}
+              {/* links */}
+              <nav className="relative z-10 flex flex-1 flex-col items-center justify-center gap-1">
+                {navLinks.map((link, i) => (
+                  <motion.div
+                    key={link.to}
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: 0.4,
+                      delay: 0.08 + i * 0.08,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
+                  >
+                    <Link
+                      to={link.to}
+                      onClick={handleNav}
+                      className={`block py-2 text-center font-display text-2xl font-light transition-colors duration-300 ${
+                        isActive(link.to)
+                          ? "text-taupe-100"
+                          : "text-taupe-500 hover:text-taupe-100"
+                      }`}
                     >
-                      <Link
-                        to={link.to}
-                        onClick={handleNavInteraction}
-                        className={`group flex items-center justify-between border-b border-taupe-300 py-5 ${
-                          isActive(link.to)
-                            ? "text-taupe-900"
-                            : "text-taupe-700 hover:text-taupe-900"
-                        }`}
-                      >
-                        <span className="font-display text-2xl font-light">
-                          {link.label}
-                        </span>
-                        <ArrowRightIcon
-                          size={18}
-                          className="text-taupe-500 transition-transform duration-300 group-hover:translate-x-1"
-                        />
-                      </Link>
-                    </motion.div>
-                  ),
-                )}
+                      {link.label}
+                    </Link>
+                  </motion.div>
+                ))}
 
-                <button
-                  onClick={handleLangToggle}
-                  className="mt-8 w-fit border-b border-dashed border-taupe-500 text-left text-xs uppercase tracking-[0.25em] text-taupe-600 transition-colors duration-300 hover:text-taupe-900"
+                {/* language */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{
+                    duration: 0.4,
+                    delay: 0.08 + navLinks.length * 0.08,
+                  }}
+                  className="mt-5 flex flex-col items-center gap-4"
                 >
-                  {lang === "en" ? "Deutsch" : "English"}
-                </button>
+                  <div className="h-px w-8 bg-taupe-600/60" />
+                  <button
+                    onClick={handleLangToggle}
+                    className="flex items-center gap-2 font-body text-[11px] uppercase tracking-[0.25em]"
+                  >
+                    <span
+                      className={
+                        lang === "en"
+                          ? "text-taupe-100"
+                          : "text-taupe-500 hover:text-taupe-300 transition-colors"
+                      }
+                    >
+                      EN
+                    </span>
+                    <span className="text-taupe-500">·</span>
+                    <span
+                      className={
+                        lang === "de"
+                          ? "text-taupe-100"
+                          : "text-taupe-500 hover:text-taupe-300 transition-colors"
+                      }
+                    >
+                      DE
+                    </span>
+                  </button>
+                </motion.div>
               </nav>
 
-              <div className="border-t border-taupe-300 px-6 py-6">
-                <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-taupe-500">
+              {/* footer */}
+              <div className="relative z-10 border-t border-taupe-700/60 px-6 py-6">
+                <p className="mb-1.5 font-body text-[9px] uppercase tracking-[0.25em] text-taupe-500">
                   {t.nav.getInTouch}
                 </p>
                 <a
                   href="mailto:hello@boldbrew.ch"
-                  className="text-sm text-taupe-700 transition-colors duration-300 hover:text-taupe-900"
+                  className="font-body text-sm text-taupe-300 transition-colors duration-300 hover:text-taupe-100"
                 >
                   {t.nav.contactEmail}
                 </a>

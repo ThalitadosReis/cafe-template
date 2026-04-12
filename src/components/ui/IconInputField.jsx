@@ -12,7 +12,7 @@ export default function IconInputField({
     <div>
       <label
         htmlFor={id}
-        className="mb-2 block font-body text-xs uppercase tracking-[0.2em] text-taupe-600"
+        className="mb-2 block font-body text-[11px] font-medium uppercase tracking-[0.35em] text-taupe-600"
       >
         {label}
       </label>
@@ -27,7 +27,7 @@ export default function IconInputField({
           value={value}
           required={required}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full border border-taupe-300 bg-transparent py-3 pl-10 pr-4 font-body text-sm text-taupe-900 transition-colors focus:border-taupe-500 focus:outline-none focus:ring-0"
+          className="w-full border border-taupe-200 bg-transparent py-3 pl-10 pr-4 font-body text-sm text-taupe-900 transition-colors focus:border-taupe-500 focus:outline-none focus:ring-0"
         />
       </div>
     </div>

@@ -1,11 +1,10 @@
 import { useState } from "react";
 import Reveal from "../components/Reveal.jsx";
-import SectionTextBlock from "../components/ui/SectionTextBlock.jsx";
+import PageHero from "../components/ui/PageHero.jsx";
 import IconInputField from "../components/ui/IconInputField.jsx";
 import { useLang } from "../i18n/LangContext.jsx";
 import { apiUrl } from "../lib/api.js";
 import {
-  ArrowRightIcon,
   CircleNotchIcon,
   ChatTextIcon,
   CheckCircleIcon,
@@ -16,6 +15,31 @@ import {
   PaperPlaneTiltIcon,
   UserIcon,
 } from "@phosphor-icons/react";
+
+function InfoItem({ icon, label, content, href }) {
+  return (
+    <div className="flex items-start gap-3">
+      <div className="mt-0.5 shrink-0 text-taupe-600">{icon}</div>
+      <div>
+        <p className="mb-2 font-body text-[11px] font-medium uppercase tracking-[0.35em] text-taupe-600">
+          {label}
+        </p>
+        {href ? (
+          <a
+            href={href}
+            className="whitespace-pre-line font-body text-sm text-taupe-700 transition-colors hover:text-taupe-900"
+          >
+            {content}
+          </a>
+        ) : (
+          <p className="whitespace-pre-line font-body text-sm font-light text-taupe-700">
+            {content}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function Contact() {
   const { t } = useLang();
@@ -28,6 +52,9 @@ export default function Contact() {
     message: "",
   });
   const [status, setStatus] = useState("idle");
+
+  const setField = (field) => (value) =>
+    setForm((p) => ({ ...p, [field]: value }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -51,126 +78,78 @@ export default function Contact() {
 
   const infoItems = [
     {
-      icon: <MapPinIcon size={16} className="text-taupe-600" />,
+      icon: <MapPinIcon size={15} />,
       label: c.labels.address,
       content: c.info.address,
     },
     {
-      icon: <PhoneIcon size={16} className="text-taupe-600" />,
+      icon: <PhoneIcon size={15} />,
       label: c.labels.phone,
       content: c.info.phone,
       href: "tel:+41412234567",
     },
     {
-      icon: <EnvelopeSimpleIcon size={16} className="text-taupe-600" />,
+      icon: <EnvelopeSimpleIcon size={15} />,
       label: c.labels.email,
       content: c.info.email,
       href: "mailto:hello@boldbrew.ch",
     },
     {
-      icon: <ClockIcon size={16} className="text-taupe-600" />,
+      icon: <ClockIcon size={15} />,
       label: c.labels.openingHours,
       content: c.info.openingHours,
     },
   ];
-  const detailsItems = [infoItems[0], infoItems[1], infoItems[2]];
-  const hoursItem = infoItems[3];
-
-  const renderInfoItem = ({ icon, label, content, href }) => (
-    <div key={label} className="flex items-start gap-4">
-      <div className="shrink-0 h-8 w-8 flex items-center justify-center rounded-full bg-taupe-100">
-        {icon}
-      </div>
-      <div>
-        <p className="mb-1 font-ui text-xs uppercase tracking-[0.18em] text-taupe-500">
-          {label}
-        </p>
-        {href ? (
-          <a
-            href={href}
-            className="whitespace-pre-line font-ui text-sm transition-colors hover:text-taupe-600"
-          >
-            {content}
-          </a>
-        ) : (
-          <p className="whitespace-pre-line font-ui text-sm font-light text-taupe-900">
-            {content}
-          </p>
-        )}
-      </div>
-    </div>
-  );
 
   return (
-    <main className="min-h-screen bg-taupe-50 pt-24">
-      <section className="relative overflow-hidden py-20">
-        <div className="relative mx-auto max-w-7xl px-6 lg:px-12">
-          <Reveal>
-            <SectionTextBlock
-              label={c.tag}
-              title={c.title}
-              body={c.sub}
-              titleClassName="text-6xl lg:text-8xl"
-            />
-          </Reveal>
-        </div>
-      </section>
+    <main className="min-h-screen bg-taupe-50">
+      <PageHero
+        tag={c.tag}
+        title={c.title}
+        sub={c.sub}
+        src="https://images.pexels.com/photos/4790061/pexels-photo-4790061.jpeg?w=1400&q=85"
+        alt="Café atmosphere"
+      />
 
-      <section className="pb-24">
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-6 lg:grid-cols-2 lg:px-12">
-          <Reveal direction="right" className="hidden lg:block">
-            <div>
-              <h3 className="mb-6 font-display text-2xl font-light text-taupe-900">
-                {c.detailsTitle}
-              </h3>
-
-              <div className="grid gap-8 md:grid-cols-2">
-                <div className="space-y-6">
-                  {detailsItems.map(renderInfoItem)}
+      <section className="py-20">
+        <div className="mx-auto max-w-7xl px-6 lg:px-12">
+          <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
+            {/* contact details */}
+            <Reveal direction="up">
+              <div>
+                <h2 className="mb-8 font-display text-2xl font-light text-taupe-900">
+                  {c.detailsTitle}
+                </h2>
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-1">
+                  <div className="space-y-4">
+                    {infoItems.slice(0, 3).map((item) => (
+                      <InfoItem key={item.label} {...item} />
+                    ))}
+                  </div>
+                  <InfoItem {...infoItems[3]} />
                 </div>
-
-                {renderInfoItem(hoursItem)}
               </div>
-            </div>
-          </Reveal>
+            </Reveal>
 
-          <Reveal direction="left" delay={0.08} className="order-1 lg:order-2">
-            <div className="space-y-5 rounded-3xl bg-white p-6 shadow-[0_4px_40px_rgb(44_37_32/6%)] md:p-8">
-              {status === "success" ? (
-                <div className="flex min-h-105 flex-col items-center justify-center text-center">
-                  <CheckCircleIcon
-                    size={48}
-                    className="mb-4 text-taupe-500"
-                    weight="light"
-                  />
-                  <p className="font-display text-2xl font-light text-taupe-900">
-                    {c.success}
-                  </p>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            {/* form */}
+            <Reveal direction="up" delay={0.08}>
+              <div className="space-y-4 p-6 ring-1 ring-taupe-200 md:p-8">
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <IconInputField
                       label={c.labels.name}
                       type="text"
                       required
                       value={form.name}
-                      onChange={(value) =>
-                        setForm((p) => ({ ...p, name: value }))
-                      }
-                      placeholder={c.placeholders.name}
+                      onChange={setField("name")}
                       Icon={UserIcon}
                     />
-
                     <IconInputField
                       label={c.labels.email}
                       type="email"
                       required
                       value={form.email}
-                      onChange={(value) =>
-                        setForm((p) => ({ ...p, email: value }))
-                      }
-                      placeholder={c.placeholders.email}
+                      onChange={setField("email")}
                       Icon={EnvelopeSimpleIcon}
                     />
                   </div>
@@ -179,15 +158,15 @@ export default function Contact() {
                     label={c.labels.subject}
                     type="text"
                     value={form.subject}
-                    onChange={(value) =>
-                      setForm((p) => ({ ...p, subject: value }))
-                    }
-                    placeholder={c.placeholders.subject}
+                    onChange={setField("subject")}
                     Icon={PaperPlaneTiltIcon}
                   />
 
                   <div>
-                    <label className="mb-2 block font-ui text-xs uppercase tracking-[0.2em] text-taupe-500">
+                    <label
+                      htmlFor="message"
+                      className="mb-2 block font-body text-[11px] font-medium uppercase tracking-[0.35em] text-taupe-600"
+                    >
                       {c.labels.message}
                     </label>
                     <div className="relative">
@@ -196,14 +175,12 @@ export default function Contact() {
                         className="absolute left-4 top-3.5 text-taupe-500"
                       />
                       <textarea
+                        id="message"
                         required
                         rows={6}
                         value={form.message}
-                        onChange={(e) =>
-                          setForm((p) => ({ ...p, message: e.target.value }))
-                        }
-                        placeholder={c.placeholders.message}
-                        className="w-full resize-none rounded-xl border border-taupe-300 bg-transparent py-3 pl-10 pr-4 font-ui text-sm text-taupe-900 transition-colors focus:border-taupe-500 focus:outline-none focus:ring-0"
+                        onChange={(e) => setField("message")(e.target.value)}
+                        className="w-full resize-none border border-taupe-200 bg-transparent py-3 pl-10 pr-4 font-body text-sm text-taupe-900 transition-colors focus:border-taupe-500 focus:outline-none focus:ring-0"
                       />
                     </div>
                   </div>
@@ -211,28 +188,40 @@ export default function Contact() {
                   <button
                     type="submit"
                     disabled={status === "loading"}
-                    className="inline-flex w-full items-center justify-center gap-3 rounded-full bg-taupe-900 px-8 py-3.5 font-ui text-[11px] uppercase tracking-[0.2em] text-taupe-100 transition-colors duration-300 hover:bg-taupe-500 disabled:opacity-50"
+                    className="inline-flex w-full items-center justify-center gap-2.5 bg-taupe-900 px-6 py-3 font-body text-[10px] uppercase tracking-[0.22em] text-taupe-100 transition-all duration-300 hover:bg-taupe-700 disabled:opacity-50 md:px-8 md:py-3.5 md:text-[11px]"
                   >
                     {status === "loading" ? (
                       <>
-                        {c.actions.sending}
-                        <CircleNotchIcon size={14} className="animate-spin" />
+                        {c.actions.sending}{" "}
+                        <CircleNotchIcon size={13} className="animate-spin" />
                       </>
                     ) : (
-                      <>
-                        {c.actions.send}
-                        <ArrowRightIcon size={14} />
-                      </>
+                      c.actions.send
                     )}
                   </button>
 
+                  {status === "success" && (
+                    <div className="flex items-center gap-3 border border-taupe-300 bg-taupe-100 px-4 py-3">
+                      <CheckCircleIcon
+                        size={15}
+                        className="shrink-0 text-taupe-600"
+                        weight="fill"
+                      />
+                      <p className="font-body text-sm text-taupe-700">
+                        {c.success}
+                      </p>
+                    </div>
+                  )}
+
                   {status === "error" && (
-                    <p className="text-sm text-red-500">{c.error}</p>
+                    <p className="font-body text-sm text-taupe-900">
+                      {c.error}
+                    </p>
                   )}
                 </form>
-              )}
-            </div>
-          </Reveal>
+              </div>
+            </Reveal>
+          </div>
         </div>
       </section>
     </main>

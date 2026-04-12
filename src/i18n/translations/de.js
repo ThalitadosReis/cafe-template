@@ -77,6 +77,30 @@ export const de = {
         "Latte Nahaufnahme",
       ],
     },
+    testimonials: {
+      tag: "Gästestimmen",
+      h2: "Was unsere\nGäste sagen",
+      items: [
+        {
+          quote:
+            "BoldBrew ist mein tägliches Ritual. Der Kaffee ist außergewöhnlich — ein Ort, der einem das Verlangsamen beibringt.",
+          name: "Sarah M.",
+          source: "Stammgast",
+        },
+        {
+          quote:
+            "Das saisonale Menü ist eine Freude. Ehrliche Zutaten, wunderschön zubereitet. Ich gehe immer gestärkt nach Hause.",
+          name: "Jonas W.",
+          source: "Google Bewertung",
+        },
+        {
+          quote:
+            "Eine seltene Entdeckung in Zürich — ein Café, dem das Handwerk wirklich am Herzen liegt. Das Team ist wunderbar, der Espresso perfekt.",
+          name: "Lena R.",
+          source: "Tripadvisor",
+        },
+      ],
+    },
     contact: {
       tag: "Kontakt aufnehmen",
       h2: "Wir freuen uns\nvon dir zu hören",
