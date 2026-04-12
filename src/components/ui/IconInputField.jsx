@@ -4,12 +4,16 @@ export default function IconInputField({
   value,
   onChange,
   Icon,
-  placeholder = "",
   required = false,
 }) {
+  const id = label.toLowerCase().replace(/\s+/g, "-");
+
   return (
     <div>
-      <label className="mb-2 block font-ui text-xs uppercase tracking-[0.2em] text-taupe-500">
+      <label
+        htmlFor={id}
+        className="mb-2 block font-body text-xs uppercase tracking-[0.2em] text-taupe-600"
+      >
         {label}
       </label>
       <div className="relative">
@@ -18,12 +22,12 @@ export default function IconInputField({
           className="absolute left-4 top-1/2 -translate-y-1/2 text-taupe-500"
         />
         <input
+          id={id}
           type={type}
           value={value}
           required={required}
-          placeholder={placeholder}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full rounded-xl border border-taupe-300 bg-transparent py-3 pl-10 pr-4 font-ui text-sm text-taupe-900 transition-colors focus:border-taupe-500 focus:outline-none focus:ring-0"
+          className="w-full border border-taupe-300 bg-transparent py-3 pl-10 pr-4 font-body text-sm text-taupe-900 transition-colors focus:border-taupe-500 focus:outline-none focus:ring-0"
         />
       </div>
     </div>

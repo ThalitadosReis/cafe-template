@@ -26,7 +26,7 @@ export default function Reveal({
       transition={{
         duration,
         delay,
-        ease: [0.16, 1, 0.3, 1],
+        ease: [0.22, 1, 0.36, 1],
       }}
     >
       {children}

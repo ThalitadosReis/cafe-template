@@ -1,38 +1,29 @@
 import { Link } from "react-router-dom";
-import { ArrowRightIcon } from "@phosphor-icons/react";
 
 const BASE_CLASS =
-  "inline-flex items-center gap-3 px-8 py-3.5 text-[11px] tracking-[0.2em] uppercase font-ui rounded-full transition-colors duration-300 group";
+  "inline-flex items-center gap-2 px-6 py-3 text-[9px] tracking-[0.22em] uppercase font-body font-medium transition-all duration-300 md:px-8 md:py-3.5 md:text-[10px]";
 
 const VARIANT_CLASS = {
-  dark: "bg-taupe-900 text-taupe-100 hover:bg-taupe-500",
-  accent: "bg-taupe-500 text-white hover:bg-taupe-600",
+  primary: "bg-taupe-900 text-taupe-100 hover:bg-taupe-700",
+  secondary: "bg-taupe-300 text-taupe-900 hover:bg-taupe-400",
   outline:
-    "border border-taupe-400 text-taupe-700 hover:bg-taupe-500 hover:text-white",
+    "border border-taupe-400 text-taupe-600 hover:border-taupe-900 hover:text-taupe-900",
 };
 
 export default function CtaLink({
   to,
   children,
-  variant = "dark",
+  variant = "primary",
   className = "",
-  iconSize = 14,
-  showIcon = true,
   onClick,
 }) {
   return (
     <Link
       to={to}
       onClick={onClick}
-      className={`${BASE_CLASS} ${!showIcon ? "gap-0" : ""} ${VARIANT_CLASS[variant]} ${className}`}
+      className={`${BASE_CLASS} ${VARIANT_CLASS[variant]} ${className}`}
     >
       {children}
-      {showIcon && (
-        <ArrowRightIcon
-          size={iconSize}
-          className="group-hover:translate-x-1 transition-transform duration-300"
-        />
-      )}
     </Link>
   );
 }
