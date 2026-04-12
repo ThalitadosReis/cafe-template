@@ -21,13 +21,11 @@ import {
   ArrowDownIcon,
   ArrowCounterClockwiseIcon,
   PlusIcon,
-  TrashIcon,
   WarningIcon,
   XIcon,
   DotsSixVerticalIcon,
   SignOutIcon,
   EyeIcon,
-  InfoIcon,
 } from "@phosphor-icons/react";
 import { getInitialMenu, getMenu, saveMenu, resetMenu } from "../data/menu.js";
 import { useLang } from "../i18n/LangContext.jsx";
@@ -35,14 +33,12 @@ import MenuPage from "./Menu.jsx";
 
 const ADMIN_AUTH_KEY = "boldbrew_admin_authed";
 const DESKTOP_ITEM_GRID_CLASS =
-  "grid grid-cols-[28px_16px_minmax(0,1fr)_minmax(0,1fr)_88px_28px] items-center gap-x-3";
+  "grid grid-cols-[28px_16px_minmax(0,1fr)_88px_28px] items-start gap-x-3";
 const NAV_BUTTON_CLASS =
-  "flex items-center gap-1.5 rounded-full border border-taupe-300 px-4 py-2 text-xs uppercase tracking-wider text-taupe-600 transition-colors hover:border-taupe-500 hover:text-taupe-900";
+  "flex items-center gap-1.5 border border-taupe-200 px-4 py-2 font-body text-xs uppercase tracking-wider text-taupe-600 transition-colors hover:border-taupe-400 hover:text-taupe-900";
 const NAV_ICON_BUTTON_CLASS =
-  "flex h-9 w-9 items-center justify-center rounded-full border border-taupe-300 text-taupe-500 transition-colors hover:border-taupe-500 hover:text-taupe-900";
-const LANG_BUTTON_CLASS =
-  "rounded-full border border-dashed border-taupe-400 px-4 py-2 text-xs uppercase tracking-wider text-taupe-600 transition-colors hover:border-taupe-700 hover:text-taupe-900";
-const SECTION_CARD_CLASS = "rounded-xl border border-taupe-300 bg-taupe-50";
+  "flex items-center justify-center text-taupe-500 transition-colors hover:text-taupe-900";
+const SECTION_CARD_CLASS = "border border-taupe-300 bg-taupe-50";
 
 function EditableCell({
   value,
@@ -79,7 +75,7 @@ function EditableCell({
             setEditing(false);
           }
         }}
-        className={`w-full rounded-sm border border-taupe-500 bg-white px-2 py-0.5 outline-none ${mono ? "font-mono text-xs text-taupe-700" : "text-sm text-taupe-900"} ${className}`}
+        className={`w-full border border-taupe-500 bg-taupe-50 px-2 py-0.5 outline-none ${mono ? "font-body text-xs text-taupe-700" : "text-sm text-taupe-900"} ${className}`}
       />
     );
   }
@@ -88,32 +84,42 @@ function EditableCell({
     <span
       onClick={() => setEditing(true)}
       title={text.editable.clickToEdit}
-      className={`block cursor-text truncate rounded-sm px-1 -mx-1 transition-colors hover:bg-taupe-100/70 ${mono ? "font-mono text-xs font-semibold text-taupe-700" : "text-sm"} ${dim ? "text-taupe-600" : "text-taupe-900"} ${!value ? "italic text-taupe-400" : ""} ${className}`}
+      className={`block cursor-text truncate px-1 -mx-1 transition-colors hover:bg-taupe-100/70 ${mono ? "font-body text-xs font-semibold text-taupe-700" : "text-sm"} ${dim ? "text-taupe-600" : "text-taupe-900"} ${!value ? "italic text-taupe-400" : ""} ${className}`}
     >
       {value || placeholder || text.editable.empty}
     </span>
   );
 }
 
-function ColumnHeaders({ text }) {
+function LangRow({ lang, item, updateLangField, text }) {
+  const isEN = lang === "en";
   return (
     <div
-      className={`${DESKTOP_ITEM_GRID_CLASS} hidden border-b border-taupe-300 bg-taupe-100 px-4 py-2 md:grid`}
+      className={`flex items-start gap-2 rounded-sm px-2 py-1.5 ${
+        isEN ? "bg-taupe-900/3" : "mt-1 bg-taupe-400/10"
+      }`}
     >
-      <span />
-      <span />
-      <span className="flex items-center gap-1 text-[9px] font-medium uppercase tracking-[0.2em] text-taupe-600">
-        <span className="inline-block h-2 w-2 rounded-full bg-[#4a90d9]/40" />{" "}
-        EN
-      </span>
-      <span className="flex items-center gap-1 text-[9px] font-medium uppercase tracking-[0.2em] text-taupe-600">
-        <span className="inline-block h-2 w-2 rounded-full bg-[#e07b4a]/40" />{" "}
-        DE
-      </span>
-      <span className="text-right text-[9px] font-medium uppercase tracking-[0.2em] text-taupe-600">
-        {text.headers.price}
-      </span>
-      <span />
+      <span
+        className={`mt-1.5 inline-block h-1.5 w-1.5 shrink-0 rounded-full ${
+          isEN ? "bg-taupe-900/40" : "bg-taupe-500/60"
+        }`}
+      />
+      <div className="min-w-0 flex-1">
+        <EditableCell
+          value={item.name?.[lang] ?? ""}
+          onChange={(val) => updateLangField("name", lang, val)}
+          placeholder={isEN ? text.headers.nameEn : text.headers.nameDe}
+          text={text}
+        />
+        <EditableCell
+          value={item.desc?.[lang] ?? ""}
+          onChange={(val) => updateLangField("desc", lang, val)}
+          placeholder={isEN ? text.headers.descEn : text.headers.descDe}
+          dim
+          className="mt-0.5"
+          text={text}
+        />
+      </div>
     </div>
   );
 }
@@ -148,95 +154,63 @@ function SortableItemRow({ item, catId, onUpdate, onRemove, isLast, text }) {
       className={`group border-b border-taupe-300 bg-taupe-50 ${isDragging ? "rounded-sm border border-taupe-400 shadow-xl" : ""} ${isLast ? "border-b-0" : ""}`}
     >
       <div className="px-4 py-3 md:hidden">
-        <div className="mb-3 flex items-start justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <button
-              {...listeners}
-              {...attributes}
-              className="cursor-grab touch-none text-taupe-400 hover:text-taupe-600 active:cursor-grabbing"
-              aria-label={text.editable.dragToReorder}
-            >
-              <DotsSixVerticalIcon size={18} weight="bold" />
-            </button>
-          </div>
-
-          <button
-            onClick={() => onRemove(catId, item.id)}
-            className="rounded-full p-1 text-taupe-400 transition-colors hover:bg-taupe-100 hover:text-red-400"
-            aria-label={text.editable.removeItem}
-          >
-            <TrashIcon size={16} />
-          </button>
-        </div>
-
-        <div className="space-y-3">
-          <div>
-            <p className="mb-1 text-[10px] uppercase tracking-[0.2em] text-taupe-500">
-              EN
-            </p>
-            <EditableCell
-              value={item.name?.en ?? ""}
-              onChange={(val) => updateLangField("name", "en", val)}
-              placeholder={text.headers.nameEn}
-              text={text}
-            />
-            <EditableCell
-              value={item.desc?.en ?? ""}
-              onChange={(val) => updateLangField("desc", "en", val)}
-              placeholder={text.headers.descEn}
-              dim
-              className="mt-1"
-              text={text}
-            />
-          </div>
-
-          <div>
-            <p className="mb-1 text-[10px] uppercase tracking-[0.2em] text-taupe-500">
-              DE
-            </p>
-            <EditableCell
-              value={item.name?.de ?? ""}
-              onChange={(val) => updateLangField("name", "de", val)}
-              placeholder={text.headers.nameDe}
-              text={text}
-            />
-            <EditableCell
-              value={item.desc?.de ?? ""}
-              onChange={(val) => updateLangField("desc", "de", val)}
-              placeholder={text.headers.descDe}
-              dim
-              className="mt-1"
-              text={text}
-            />
-          </div>
-
-          <div>
-            <p className="mb-1 text-[10px] uppercase tracking-[0.2em] text-taupe-500">
-              {text.headers.price}
-            </p>
-            <EditableCell
-              value={`CHF ${item.price}`}
-              onChange={updatePrice}
-              mono
-              placeholder="0.00"
-              text={text}
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="hidden md:block">
-        <div className={`${DESKTOP_ITEM_GRID_CLASS} px-4 pb-1 pt-3`}>
+        <div className="mb-3 flex items-center justify-between">
           <button
             {...listeners}
             {...attributes}
             className="cursor-grab touch-none text-taupe-400 hover:text-taupe-600 active:cursor-grabbing"
             aria-label={text.editable.dragToReorder}
           >
+            <DotsSixVerticalIcon size={18} weight="bold" />
+          </button>
+          <button
+            onClick={() => onRemove(catId, item.id)}
+            className="p-1 text-taupe-400 transition-colors hover:text-taupe-900"
+            aria-label={text.editable.removeItem}
+          >
+            <XIcon size={16} />
+          </button>
+        </div>
+
+        <LangRow
+          lang="en"
+          item={item}
+          updateLangField={updateLangField}
+          text={text}
+        />
+        <LangRow
+          lang="de"
+          item={item}
+          updateLangField={updateLangField}
+          text={text}
+        />
+
+        <div className="mt-3 border-t border-taupe-200 pt-3">
+          <p className="mb-1 text-[10px] uppercase tracking-[0.2em] text-taupe-500">
+            {text.headers.price}
+          </p>
+          <EditableCell
+            value={`CHF ${item.price}`}
+            onChange={updatePrice}
+            mono
+            placeholder="0.00"
+            text={text}
+          />
+        </div>
+      </div>
+
+      <div className="hidden md:block">
+        <div className={`${DESKTOP_ITEM_GRID_CLASS} px-4 py-3`}>
+          <button
+            {...listeners}
+            {...attributes}
+            className="mt-0.5 cursor-grab touch-none text-taupe-400 hover:text-taupe-600 active:cursor-grabbing"
+            aria-label={text.editable.dragToReorder}
+          >
             <DotsSixVerticalIcon size={16} weight="bold" />
           </button>
 
-          <div className="flex flex-col gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+          <div className="mt-1 flex flex-col gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
             <button
               onClick={() => onUpdate(catId, item.id, "__moveUp")}
               className="text-taupe-500 transition-colors hover:text-taupe-700"
@@ -253,19 +227,25 @@ function SortableItemRow({ item, catId, onUpdate, onRemove, isLast, text }) {
             </button>
           </div>
 
-          <EditableCell
-            value={item.name?.en ?? ""}
-            onChange={(val) => updateLangField("name", "en", val)}
-            placeholder={text.headers.nameEn}
-            text={text}
-          />
-          <EditableCell
-            value={item.name?.de ?? ""}
-            onChange={(val) => updateLangField("name", "de", val)}
-            placeholder={text.headers.nameDe}
-            text={text}
-          />
+          <div>
+            <LangRow
+              lang="en"
+              item={item}
+              updateLangField={updateLangField}
+              text={text}
+            />
+            <LangRow
+              lang="de"
+              item={item}
+              updateLangField={updateLangField}
+              text={text}
+            />
+          </div>
+
           <div className="text-right">
+            <p className="mb-0.5 text-[9px] uppercase tracking-[0.2em] text-taupe-500">
+              {text.headers.price}
+            </p>
             <EditableCell
               value={`CHF ${item.price}`}
               onChange={updatePrice}
@@ -277,32 +257,11 @@ function SortableItemRow({ item, catId, onUpdate, onRemove, isLast, text }) {
 
           <button
             onClick={() => onRemove(catId, item.id)}
-            className="opacity-0 text-taupe-400 transition-colors hover:text-red-400 group-hover:opacity-100"
+            className="mt-0.5 opacity-0 text-taupe-400 transition-colors hover:text-taupe-900 group-hover:opacity-100"
             aria-label={text.editable.removeItem}
           >
-            <TrashIcon size={14} />
+            <XIcon size={14} />
           </button>
-        </div>
-
-        <div className={`${DESKTOP_ITEM_GRID_CLASS} px-4 pb-3`}>
-          <span />
-          <span />
-          <EditableCell
-            value={item.desc?.en ?? ""}
-            onChange={(val) => updateLangField("desc", "en", val)}
-            placeholder={text.headers.descEn}
-            dim
-            text={text}
-          />
-          <EditableCell
-            value={item.desc?.de ?? ""}
-            onChange={(val) => updateLangField("desc", "de", val)}
-            placeholder={text.headers.descDe}
-            dim
-            text={text}
-          />
-          <span />
-          <span />
         </div>
       </div>
     </div>
@@ -344,22 +303,14 @@ function LogoutButton({ onClick, label, compact = false }) {
   );
 }
 
-function LanguageToggleButton({ lang, onClick }) {
-  return (
-    <button onClick={onClick} className={LANG_BUTTON_CLASS}>
-      {lang === "en" ? "DE" : "EN"}
-    </button>
-  );
-}
-
 function AdminPreviewModal({ open, title, closeLabel, onClose }) {
   if (!open) return null;
 
   return (
     <div className="fixed inset-0 z-60 flex items-center justify-center bg-taupe-900/50 p-0 backdrop-blur-sm sm:p-4">
-      <div className="h-screen w-full overflow-hidden border border-taupe-300 bg-taupe-50 shadow-2xl sm:h-[90vh] sm:max-w-7xl sm:rounded-2xl">
+      <div className="h-screen w-full overflow-hidden border border-taupe-300 bg-taupe-50 shadow-2xl sm:h-[90vh] sm:max-w-7xl">
         <div className="flex h-14 items-center justify-between border-b border-taupe-300 px-4">
-          <p className="font-ui text-xs uppercase tracking-[0.2em] text-taupe-600">
+          <p className="font-body text-xs uppercase tracking-[0.2em] text-taupe-600">
             {title}
           </p>
           <button
@@ -383,6 +334,7 @@ function CategoryBlock({
   catIdx,
   onUpdateItem,
   onRemoveItem,
+  onRemoveCategory,
   onDragEnd,
   onUpdateLabel,
   text,
@@ -396,15 +348,17 @@ function CategoryBlock({
   const itemIds = category.items.map((i) => i.id);
 
   return (
-    <div className="mb-5 overflow-hidden rounded-xl border border-taupe-300">
+    <div className="mb-5 overflow-hidden border border-taupe-300">
       <div className="flex flex-wrap items-center gap-3 border-b border-taupe-300 bg-taupe-100 px-4 py-3.5">
         <span className="w-5 shrink-0 text-[11px] font-medium tabular-nums text-taupe-600">
           {String(catIdx + 1).padStart(2, "0")}
         </span>
 
-        <div className="min-w-0 flex-1 grid grid-cols-2 gap-3">
-          <div className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#4a90d9]/50 shrink-0" />
+        <div className="min-w-0 flex-1 grid grid-cols-2 gap-0">
+          <div className="flex items-center gap-2 rounded-sm bg-taupe-900/4 px-2 py-1">
+            <span className="shrink-0 font-body text-[8px] font-semibold uppercase tracking-[0.2em] text-taupe-900/50">
+              EN
+            </span>
             <EditableCell
               value={category.label?.en ?? ""}
               onChange={(val) => onUpdateLabel(category.id, "en", val)}
@@ -413,12 +367,14 @@ function CategoryBlock({
               text={text}
             />
           </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#e07b4a]/50 shrink-0" />
+          <div className="flex items-center gap-2 rounded-sm bg-taupe-400/8 px-2 py-1 ml-1">
+            <span className="shrink-0 font-body text-[8px] font-semibold uppercase tracking-[0.2em] text-taupe-500">
+              DE
+            </span>
             <EditableCell
               value={category.label?.de ?? ""}
               onChange={(val) => onUpdateLabel(category.id, "de", val)}
-              className="font-display text-lg font-light sm:text-xl"
+              className="font-display text-lg font-light sm:text-xl text-taupe-700"
               placeholder={text.headers.categoryDe}
               text={text}
             />
@@ -429,10 +385,18 @@ function CategoryBlock({
           <span className="shrink-0 text-[11px] text-taupe-500">
             {category.items.length} {text.headers.itemCount}
           </span>
+          <button
+            onClick={() => {
+              if (confirm(text.headers.deleteCategoryConfirm))
+                onRemoveCategory(category.id);
+            }}
+            className="text-taupe-400 transition-colors hover:text-taupe-900"
+            aria-label={text.editable.deleteCategory}
+          >
+            <XIcon size={14} />
+          </button>
         </div>
       </div>
-
-      <ColumnHeaders text={text} />
 
       <DndContext
         sensors={sensors}
@@ -478,22 +442,28 @@ function LoginScreen({ onLogin, text }) {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-taupe-100 px-6">
+    <div className="flex min-h-screen items-center justify-center bg-taupe-50 px-6">
       <div className="w-full max-w-sm">
-        <div>
-          <p className="text-sm font-medium leading-none text-taupe-900">
+        <div className="mb-10 flex flex-col leading-none">
+          <span className="font-display text-xl font-light uppercase tracking-[0.15em] text-taupe-900">
             {text.login.brand}
-          </p>
-          <p className="text-[10px] uppercase tracking-widest text-taupe-600">
+          </span>
+          <span className="font-body text-[9px] font-light uppercase tracking-[0.35em] text-taupe-500">
             {text.login.admin}
-          </p>
+          </span>
         </div>
-        <h1 className="mb-2 font-display text-4xl font-light text-taupe-900">
+        <h1 className="mb-2 font-display text-4xl font-light italic text-taupe-900">
           {text.login.title}
         </h1>
-        <p className="mb-8 text-sm text-taupe-600">{text.login.subtitle}</p>
+        <p className="mb-8 font-body text-sm font-light text-taupe-600">
+          {text.login.subtitle}
+        </p>
         <form onSubmit={submit} className="space-y-4">
+          <label htmlFor="admin-password" className="sr-only">
+            {text.login.passwordPlaceholder}
+          </label>
           <input
+            id="admin-password"
             type="password"
             value={pw}
             onChange={(e) => {
@@ -502,21 +472,21 @@ function LoginScreen({ onLogin, text }) {
             }}
             placeholder={text.login.passwordPlaceholder}
             autoFocus
-            className={`w-full rounded-sm border bg-white px-4 py-3 text-sm text-taupe-900 outline-none transition-colors ${err ? "border-red-400" : "border-taupe-300 focus:border-taupe-600"}`}
+            className={`w-full border bg-transparent px-4 py-3 font-body text-sm text-taupe-900 outline-none transition-colors ${err ? "border-taupe-700" : "border-taupe-300 focus:border-taupe-600"}`}
           />
           {err && (
-            <p className="text-xs text-red-500 flex items-center gap-1">
+            <p className="flex items-center gap-1 font-body text-xs text-taupe-900">
               <WarningIcon size={12} /> {text.login.wrongPassword}
             </p>
           )}
           <button
             type="submit"
-            className="w-full rounded-full bg-taupe-900 py-3 text-sm uppercase tracking-wider text-taupe-100 transition-colors hover:bg-taupe-600"
+            className="w-full bg-taupe-900 py-3 font-body text-[10px] uppercase tracking-[0.22em] text-taupe-100 transition-colors hover:bg-taupe-700"
           >
             {text.login.login}
           </button>
         </form>
-        <p className="mt-4 text-center text-xs text-taupe-500">
+        <p className="mt-6 font-body text-xs text-taupe-500">
           {text.login.demoPassword}
         </p>
       </div>
@@ -526,7 +496,7 @@ function LoginScreen({ onLogin, text }) {
 
 export default function AdminPage() {
   const navigate = useNavigate();
-  const { t, lang, setLang } = useLang();
+  const { t } = useLang();
   const copy = t.admin;
 
   const [authed, setAuthed] = useState(
@@ -536,7 +506,6 @@ export default function AdminPage() {
   const [menuLoaded, setMenuLoaded] = useState(false);
   const [saveStatus, setSaveStatus] = useState("idle");
   const [previewOpen, setPreviewOpen] = useState(false);
-
   useEffect(() => {
     let active = true;
 
@@ -667,6 +636,10 @@ export default function AdminPage() {
     );
   };
 
+  const handleRemoveCategory = (catId) => {
+    setMenu((prev) => prev.filter((cat) => cat.id !== catId));
+  };
+
   const handleAddCategory = () => {
     setMenu((prev) => [
       ...prev,
@@ -691,10 +664,6 @@ export default function AdminPage() {
     setAuthed(false);
   };
 
-  const handleLangToggle = () => {
-    setLang(lang === "en" ? "de" : "en");
-  };
-
   const statCards = [
     { label: copy.page.stats.categories, value: menu.length },
     { label: copy.page.stats.items, value: totalItems },
@@ -702,69 +671,79 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-taupe-100">
-      <header className="sticky top-0 z-40 border-b border-taupe-300 bg-taupe-50/90 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-4 sm:px-6 lg:px-12">
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <div className="flex min-w-0 items-center gap-3">
-                <button
-                  onClick={() => navigate("/")}
-                  className={NAV_ICON_BUTTON_CLASS}
-                  aria-label={copy.topbar.backToSite}
-                >
-                  <svg
-                    width="16"
-                    height="16"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M19 12H5M12 5l-7 7 7 7"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </button>
-
-                <div className="flex min-w-0 select-none flex-col leading-none">
-                  <span className="truncate font-display text-lg font-light uppercase tracking-[0.15em] text-taupe-900 sm:text-xl">
-                    {copy.topbar.brand}
-                  </span>
-                  <span className="font-ui text-[9px] font-light uppercase tracking-[0.35em] text-taupe-500">
-                    {copy.topbar.admin}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 sm:gap-3">
-              <div className="sm:hidden">
-                <LogoutButton onClick={handleLogout} compact />
-              </div>
-
-              <div className="hidden items-center gap-2 sm:flex sm:gap-3">
-                <PreviewButton
-                  onClick={() => setPreviewOpen(true)}
-                  label={copy.topbar.preview}
+      <header className="sticky top-0 z-40 border-b border-taupe-200 bg-taupe-50/95 backdrop-blur-sm">
+        <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-12">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => navigate("/")}
+              className={NAV_ICON_BUTTON_CLASS}
+              aria-label={copy.topbar.backToSite}
+            >
+              <svg
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M19 12H5M12 5l-7 7 7 7"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
-                <ResetButton onClick={handleReset} label={copy.topbar.reset} />
-                <LogoutButton
-                  onClick={handleLogout}
-                  label={copy.topbar.logout}
-                />
-                <LanguageToggleButton lang={lang} onClick={handleLangToggle} />
-              </div>
+              </svg>
+            </button>
+
+            <div className="h-5 w-px bg-taupe-200" />
+
+            <div className="flex select-none flex-col leading-none">
+              <span className="font-display text-base font-light uppercase tracking-[0.15em] text-taupe-900 sm:text-lg">
+                {copy.topbar.brand}
+              </span>
+              <span className="font-body text-[9px] font-light uppercase tracking-[0.35em] text-taupe-500">
+                {copy.topbar.admin}
+              </span>
             </div>
           </div>
 
-          <div className="flex justify-end gap-2 sm:hidden">
-            <PreviewButton onClick={() => setPreviewOpen(true)} compact />
-            <ResetButton onClick={handleReset} compact />
-            <LanguageToggleButton lang={lang} onClick={handleLangToggle} />
+          <div className="flex items-center gap-3">
+            <span
+              className={`hidden font-body text-[11px] tracking-wider text-taupe-600 transition-all duration-500 sm:block ${saveStatus === "saved" ? "opacity-100" : "opacity-0"}`}
+            >
+              {copy.topbar.saved}
+            </span>
+
+            {/* Mobile: icons only */}
+            <div className="flex items-center gap-2 sm:hidden">
+              <PreviewButton
+                onClick={() => setPreviewOpen(true)}
+                label={copy.topbar.preview}
+                compact
+              />
+              <ResetButton
+                onClick={handleReset}
+                label={copy.topbar.reset}
+                compact
+              />
+              <LogoutButton
+                onClick={handleLogout}
+                label={copy.topbar.logout}
+                compact
+              />
+            </div>
+
+            {/* desktop */}
+            <div className="hidden items-center gap-2 sm:flex">
+              <PreviewButton
+                onClick={() => setPreviewOpen(true)}
+                label={copy.topbar.preview}
+              />
+              <ResetButton onClick={handleReset} label={copy.topbar.reset} />
+              <LogoutButton onClick={handleLogout} label={copy.topbar.logout} />
+            </div>
           </div>
-        </div>
+        </nav>
       </header>
 
       <AdminPreviewModal
@@ -774,20 +753,12 @@ export default function AdminPage() {
         onClose={() => setPreviewOpen(false)}
       />
 
-      <div className="mx-auto max-w-7xl px-4 py-2 sm:px-6 sm:py-10 lg:px-12">
-        <div className="mb-6 flex justify-end">
-          <span
-            className={`text-[11px] transition-all duration-500 ${saveStatus === "saved" ? "text-taupe-600" : "text-transparent"}`}
-          >
-            {copy.topbar.saved}
-          </span>
-        </div>
-
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-12">
         <section className="mb-8">
           <p className="mb-2 text-[10px] uppercase tracking-[0.25em] text-taupe-600">
             {copy.page.kicker}
           </p>
-          <h1 className="mb-2 font-display text-3xl font-light text-taupe-900 sm:text-4xl">
+          <h1 className="mb-2 font-display text-3xl font-light italic text-taupe-900 sm:text-4xl">
             {copy.page.title}
           </h1>
           <p className="text-sm text-taupe-600">{copy.page.description}</p>
@@ -800,45 +771,17 @@ export default function AdminPage() {
                 <p className="mb-1 text-[10px] uppercase tracking-widest text-taupe-500">
                   {label}
                 </p>
-                <p className="font-display text-3xl font-light text-taupe-700">
+                <p className="font-display text-3xl font-light text-taupe-900">
                   {value}
                 </p>
               </div>
             ))}
           </div>
-
-          <div
-            className={`${SECTION_CARD_CLASS} px-4 py-3 text-xs text-taupe-600`}
-          >
-            <div className="flex flex-wrap items-start gap-x-5 gap-y-2">
-              <InfoIcon size={20} className="text-taupe-700" />
-              <div>
-                <div className="flex gap-4">
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-[#4a90d9]/40" />{" "}
-                    {copy.page.legend.english}
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-[#e07b4a]/40" />{" "}
-                    {copy.page.legend.german}
-                  </span>
-                </div>
-
-                <div className="mt-1 flex items-center gap-1.5 text-taupe-600">
-                  <DotsSixVerticalIcon size={14} weight="bold" />
-                  <span>{copy.page.legend.reorderText}</span>
-                </div>
-                <div className="mt-2 flex items-center gap-1.5 text-taupe-600">
-                  <span>{copy.page.legend.priceText}</span>
-                </div>
-              </div>
-            </div>
-          </div>
         </section>
 
-        <section className="rounded-2xl border border-taupe-300 bg-taupe-50 p-4 sm:p-5">
+        <section className="border border-taupe-300 bg-taupe-50 p-4 sm:p-5">
           <div className="mb-4 flex items-center justify-between gap-3 border-b border-taupe-300 pb-3">
-            <h2 className="font-ui text-[11px] uppercase tracking-[0.2em] text-taupe-600">
+            <h2 className="font-body text-[11px] uppercase tracking-[0.2em] text-taupe-600">
               {copy.page.title}
             </h2>
             <span className="text-[10px] uppercase tracking-[0.2em] text-taupe-500">
