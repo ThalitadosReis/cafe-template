@@ -486,9 +486,17 @@ function LoginScreen({ onLogin, text }) {
             {text.login.login}
           </button>
         </form>
-        <p className="mt-6 font-body text-xs text-taupe-500">
-          {text.login.demoPassword}
-        </p>
+        <div className="mt-8 space-y-3 border-t border-taupe-200 pt-6">
+          <p className="font-body text-[11px] uppercase tracking-[0.25em] text-taupe-500">
+            Demo credentials
+          </p>
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-xs text-taupe-500">Password</span>
+            <span className="font-body text-xs text-taupe-700">
+              boldbrew2024
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -714,7 +722,7 @@ export default function AdminPage() {
               {copy.topbar.saved}
             </span>
 
-            {/* Mobile: icons only */}
+            {/* mobile */}
             <div className="flex items-center gap-2 sm:hidden">
               <PreviewButton
                 onClick={() => setPreviewOpen(true)}
